@@ -1,1 +1,9 @@
 P2P-Maze-Game.iml
+*.class
+
+# idea conf files
+.idea
+.idea/
+*.iml
+*.ipr
+*.iws
