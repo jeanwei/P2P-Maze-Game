@@ -82,14 +82,15 @@ public class Game implements GameInterface {
   }
 
   public static void main(String[] args) {
-    if (args.length < 2) {
+    if (args.length < 3) {
       System.err.println("Invalid input to start the game");
       return;
     }
 
     System.err.println("s1");
-    int portNumber = Integer.parseInt(args[0]);
-    String playerId = args[1];
+    String trackerIpAddress = args[0];
+    int portNumber = Integer.parseInt(args[1]);
+    String playerId = args[2];
     if (playerId == null || playerId.length() != 2) {
       System.err.println("Invalid player id");
       return;
@@ -97,7 +98,7 @@ public class Game implements GameInterface {
     try {
       System.err.println("s2");
       String serverIP = "localhost";
-      Registry registry = LocateRegistry.getRegistry(serverIP, portNumber);
+      Registry registry = LocateRegistry.getRegistry(trackerIpAddress, portNumber);
 
       Game game = new Game(portNumber, playerId);
 
@@ -113,7 +114,7 @@ public class Game implements GameInterface {
       GameInterface iGame = (GameInterface) UnicastRemoteObject.exportObject(game, 0);
 
       // Bind the remote object's stub in the registry
-      registry.bind(playerId, iGame);
+      registry.rebind(playerId, iGame);
 
       System.err.println("Player ready: " + playerId);
 
