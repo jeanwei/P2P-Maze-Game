@@ -6,9 +6,11 @@ import java.io.Serializable;
  * Created by ufinity on 9/17/2016.
  */
 public class Player implements Serializable {
-  public String playerId = null;
-  public String ip;
-  public int portNumber;
+  private String playerId = null;
+  private String ip;
+  private int portNumber;
+  private Position position;
+  private int score;
 
   public Player(String playerId, String ip, int portNumber) {
     this.playerId = playerId;
@@ -40,12 +42,30 @@ public class Player implements Serializable {
     this.portNumber = portNumber;
   }
 
+  public Position getPosition() {
+    return position;
+  }
+
+  public void setPosition(Position position) {
+    this.position = position;
+  }
+
+  public int getScore() {
+    return score;
+  }
+
+  public void setScore(int score) {
+    this.score = score;
+  }
+
   @Override
   public String toString() {
     return "Player{" +
         "playerId='" + playerId + '\'' +
         ", ip='" + ip + '\'' +
         ", portNumber=" + portNumber +
+        ", position=" + position +
+        ", score=" + score +
         '}';
   }
 }

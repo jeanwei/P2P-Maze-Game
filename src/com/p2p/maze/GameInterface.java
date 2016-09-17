@@ -17,10 +17,10 @@ public interface GameInterface extends Remote {
    * [Primary] Inform primary server the new player
    * if primary does not contain backup server, this player will be promoted
    *
-   * @param playerId backup server to be
+   * @param player backup server to be
    * @return game state copied to backup server
    */
-  public GameState initPlayer(String playerId) throws RemoteException;
+  public GameState initPlayer(Player player) throws RemoteException;
 
   /**
    * [Primary] Get latest game state from primary server

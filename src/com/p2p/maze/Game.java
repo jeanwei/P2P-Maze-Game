@@ -25,11 +25,12 @@ public class Game implements GameInterface {
   public static final int CMD_EXIT = 9;
 
   private Player player;
+  private Registry serverRegistry;
 
   public String playerId = null;
   public int portNumber;
 
-  private GameState gameState = new GameState();
+  private GameState gameState;
 
   private Game() {
 
@@ -67,16 +68,26 @@ public class Game implements GameInterface {
     TrackerInterface stub = (TrackerInterface) registry.lookup("Tracker");
     TrackerState trackerState = stub.register(player);
     System.out.println("Tracker response: " + trackerState.toString());
-    gameState.setN(trackerState.getN());
-    gameState.setK(trackerState.getK());
+    gameState = new GameState(trackerState.getN(), trackerState.getK());
     gameState.setPrimary(trackerState.getPrimary());
     gameState.setBackup(trackerState.getBackup());
     System.out.println("Tracker response: " + gameState.toString());
 
   }
 
-  private void initPosition() {
+  private void initPosition() throws RemoteException, NotBoundException {
 
+    Player primaryPlayer = gameState.getPrimary();
+
+    primaryPlayer = primaryPlayer != null ? primaryPlayer : gameState.getBackup();
+
+    if (primaryPlayer != null && !primaryPlayer.getPlayerId().equals(player.getPlayerId())){
+      serverRegistry = LocateRegistry.getRegistry(primaryPlayer.getIp(), primaryPlayer.getPortNumber());
+      GameInterface stub = (GameInterface) serverRegistry.lookup(primaryPlayer.getPlayerId());
+      stub.initPlayer(player);
+    }  else {
+      initPlayer(player);
+    }
   }
 
   private void run() {
@@ -102,6 +113,7 @@ public class Game implements GameInterface {
       InetAddress IP=InetAddress.getLocalHost();
       System.out.println("IP of my system is := "+IP.getHostAddress());
       String localServerIp = IP.getHostAddress();
+//      localServerIp = "localhost";
 
       Game game = new Game(playerId, localServerIp, portNumber);
 
@@ -143,13 +155,14 @@ public class Game implements GameInterface {
   }
 
   @Override
-  public GameState initPlayer(String playerId) throws RemoteException {
-    return null;
+  public GameState initPlayer(Player player) throws RemoteException {
+    gameState.addNewPlayer(player);
+    return gameState;
   }
 
   @Override
   public GameState getGameState() throws RemoteException {
-    return null;
+    return gameState;
   }
 
   @Override
