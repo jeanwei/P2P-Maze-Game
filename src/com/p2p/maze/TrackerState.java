@@ -46,7 +46,7 @@ public class TrackerState implements Serializable {
 
   @Override
   public String toString() {
-    return "TrackerState{" +
+    return "TrackerState {" +
         "n=" + n +
         ", k=" + k +
         ", primary='" + primary + '\'' +

@@ -23,24 +23,12 @@ public class Game implements GameInterface {
   public static final int CMD_MOVE_NORTH = 4;
   public static final int CMD_EXIT = 9;
 
-  public String playerId = null;
-  public int portNumber;
-
+  private String playerId = null;
+  private int portNumber;
   private GameState gameState = new GameState();
-
-  private Game() {
-
-  }
 
   public Game(int portNumber, String playerId) {
     this.portNumber = portNumber;
-    this.playerId = playerId;
-  }
-
-  public Game(int portNumber, int n, int k, String playerId) {
-    this.portNumber = portNumber;
-    this.gameState.n = n;
-    this.gameState.k = k;
     this.playerId = playerId;
   }
 
@@ -61,6 +49,13 @@ public class Game implements GameInterface {
   }
 
 
+  /**
+   * Contact tracker when player join the game, receive tracker state: n, k, primary, backup
+   *
+   * @param registry
+   * @throws RemoteException
+   * @throws NotBoundException
+   */
   private void contactTracker(Registry registry) throws RemoteException, NotBoundException {
     TrackerInterface stub = (TrackerInterface) registry.lookup("Tracker");
     TrackerState trackerState = stub.register(playerId);
@@ -73,7 +68,7 @@ public class Game implements GameInterface {
 
   }
 
-  private void initPosition() {
+  private void init() {
 
   }
 
@@ -94,6 +89,7 @@ public class Game implements GameInterface {
       System.err.println("Invalid player id");
       return;
     }
+
     try {
       System.err.println("s2");
       String serverIP = "localhost";
@@ -101,11 +97,9 @@ public class Game implements GameInterface {
 
       Game game = new Game(portNumber, playerId);
 
-      // contact tracker and get tracker state: n, k, primary, backup
       game.contactTracker(registry);
 
-      // generate random position and call move (repeat till a move is valid)
-      game.initPosition();
+      game.init();
 
       // infinite loop that waits for user input and make a move
       game.run();
@@ -115,7 +109,7 @@ public class Game implements GameInterface {
       // Bind the remote object's stub in the registry
       registry.bind(playerId, iGame);
 
-      System.err.println("Player ready: " + playerId);
+      System.out.println("Player ready: " + playerId);
 
     } catch (Exception e) {
       System.err.println("Client exception: " + e.toString());
