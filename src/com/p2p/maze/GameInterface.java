@@ -35,14 +35,14 @@ public interface GameInterface extends Remote {
    * @param move movement direction (1: west, 2: south, 3: east, 4: north)
    * @return Game state
    */
-  public GameState move(Game.Command move) throws RemoteException;
+  public GameState move(Player player, Game.Command move) throws RemoteException;
 
   /**
    * [Primary] Player exit the game
    *
-   * @param playerId player (user input: 9)
+   * @param player (user input: 9)
    */
-  public void exit(String playerId) throws RemoteException;
+  public void exit(Player player) throws RemoteException;
 
   /**
    * [Primary <-> Backup] Ping each other every 2sec to check alive

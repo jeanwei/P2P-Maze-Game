@@ -6,6 +6,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Scanner;
 
 /**
  * Game
@@ -49,10 +50,10 @@ public class Game implements GameInterface {
     TrackerInterface stub = (TrackerInterface) registry.lookup("Tracker");
     TrackerState trackerState = stub.register(player);
     System.out.println("Tracker response: " + trackerState.toString());
-    gameState = new GameState(trackerState.getN(), trackerState.getK());
-    gameState.setPrimary(trackerState.getPrimary());
-    gameState.setBackup(trackerState.getBackup());
-    System.out.println("Tracker response: " + gameState.toString());
+    gameState = new GameState(trackerState);
+//    gameState.setPrimary(trackerState.getPrimary());
+//    gameState.setBackup(trackerState.getBackup());
+    System.out.println("TrackerState response: " + gameState.toString());
 
   }
 
@@ -65,14 +66,87 @@ public class Game implements GameInterface {
     if (primaryPlayer != null && !primaryPlayer.getPlayerId().equals(player.getPlayerId())){
       serverRegistry = LocateRegistry.getRegistry(primaryPlayer.getIp(), primaryPlayer.getPortNumber());
       GameInterface stub = (GameInterface) serverRegistry.lookup(primaryPlayer.getPlayerId());
-      stub.initPlayer(player);
+      updateGameState(stub.initPlayer(player));
     }  else {
-      initPlayer(player);
+      gameState.initGameState();
+      gameState.addNewPlayer(player);
+      updatePlayer();
+    }
+
+    System.out.println("game state after init: " + gameState.toString());
+    System.out.println("player after init: " + player.toString());
+  }
+
+  private void updateGameState(GameState gameState){
+    this.gameState = gameState;
+    updatePlayer();
+
+    System.out.println("game state after move: " + gameState.toString());
+    System.out.println("player after move: " + player.toString());
+  }
+
+  private void updatePlayer(){
+    String playerId = player.getPlayerId();
+    Position position = gameState.getPlayerPosition().get(playerId);
+    if (position != null){
+      player.setPosition(position);
+    }
+
+    Integer score = gameState.getScoreList().get(playerId);
+    if (score != null){
+      player.setScore(score);
     }
   }
 
   private void run() {
+    System.out.println("Player is playing: " + player.getPlayerId());
+    Scanner scanner = new Scanner(System.in);
+    while (true) {
 
+      String input = scanner.nextLine();
+      if (input == null || input.length() == 0){
+        continue;
+      }
+
+      if ("q".equals(input)) {
+        System.out.println("Exit!");
+        System.exit(0);
+      }
+
+      System.out.println("input : " + input);
+      System.out.println("-----------\n");
+      Player primaryPlayer = gameState.getPrimary();
+      try {
+        serverRegistry = LocateRegistry.getRegistry(primaryPlayer.getIp(), primaryPlayer.getPortNumber());
+        GameInterface stub = (GameInterface) serverRegistry.lookup(primaryPlayer.getPlayerId());
+        switch (input.charAt(0)){
+
+          case '0':
+            updateGameState(stub.getGameState());
+            break;
+          case '1':
+            updateGameState(stub.move(player, Command.MOVE_WEST));
+            break;
+          case '2':
+            updateGameState(stub.move(player, Command.MOVE_SOUTH));
+            break;
+          case '3':
+            updateGameState(stub.move(player, Command.MOVE_EAST));
+            break;
+          case '4':
+            updateGameState(stub.move(player, Command.MOVE_NORTH));
+            break;
+          case '5':
+            stub.exit(player);
+            break;
+
+        }
+      } catch (RemoteException e) {
+        e.printStackTrace();
+      } catch (NotBoundException e) {
+        e.printStackTrace();
+      }
+    }
   }
 
   public static void main(String[] args) {
@@ -106,9 +180,6 @@ public class Game implements GameInterface {
 
       game.init();
 
-      // infinite loop that waits for user input and make a move
-      game.run();
-
       GameInterface iGame = (GameInterface) UnicastRemoteObject.exportObject(game, 0);
 
       // Bind the remote object's stub in the registry
@@ -117,6 +188,9 @@ public class Game implements GameInterface {
       playerRegistry.rebind(playerId, iGame);
 
       System.out.println("Player ready: " + playerId);
+
+      // infinite loop that waits for user input and make a move
+      game.run();
 
     } catch (Exception e) {
       System.err.println("Client exception: " + e.toString());
@@ -146,28 +220,32 @@ public class Game implements GameInterface {
   }
 
   @Override
-  public GameState move(Command move) throws RemoteException {
+  public GameState move(Player player, Command move) throws RemoteException {
     switch (move) {
       case MOVE_WEST:
+        gameState.move(player, 0, -1);
         break;
 
       case MOVE_SOUTH:
+        gameState.move(player, 1, 0);
         break;
 
       case MOVE_EAST:
+        gameState.move(player, 0, 1);
         break;
 
       case MOVE_NORTH:
+        gameState.move(player, -1, 0);
         break;
 
       default:
         System.err.println("Unrecognized move command");
     }
-    return null;
+    return gameState;
   }
 
   @Override
-  public void exit(String playerId) throws RemoteException {
+  public void exit(Player player) throws RemoteException {
 
   }
 
