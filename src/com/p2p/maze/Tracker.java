@@ -55,7 +55,7 @@ public class Tracker implements TrackerInterface {
         // if has primary only, set to backup
     String backup = trackerState.getBackup();
     if (backup == null || backup.isEmpty()){
-      trackerState.setBackup(backup);
+      trackerState.setBackup(playerId);
     }
         // return n, k, primary and backup
     System.err.println("after register playerId:" + playerId);
