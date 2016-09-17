@@ -84,7 +84,7 @@ public class Tracker implements TrackerInterface {
       // Bind the remote object's stub in the registry
       String serverIP = "localhost";
       Registry registry = LocateRegistry.getRegistry(serverIP, portNumber);
-      registry.bind("Tracker", stub);
+      registry.rebind("Tracker", stub);
 
       System.err.println("Tracker Server ready");
       System.err.println("portNumber: " + portNumber);
