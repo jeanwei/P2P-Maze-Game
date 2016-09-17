@@ -9,8 +9,8 @@ import java.io.Serializable;
 public class TrackerState implements Serializable {
   int n;
   int k;
-  String primary;
-  String backup;
+  Player primary;
+  Player backup;
 
   int getN() {
     return n;
@@ -28,19 +28,19 @@ public class TrackerState implements Serializable {
     this.k = k;
   }
 
-  String getPrimary() {
+  Player getPrimary() {
     return primary;
   }
 
-  void setPrimary(String primary) {
+  void setPrimary(Player primary) {
     this.primary = primary;
   }
 
-  String getBackup() {
+  Player getBackup() {
     return backup;
   }
 
-  void setBackup(String backup) {
+  void setBackup(Player backup) {
     this.backup = backup;
   }
 

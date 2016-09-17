@@ -39,37 +39,37 @@ public class Tracker implements TrackerInterface {
     this.trackerState = trackerState;
   }
 
-  public TrackerState register(String playerId) throws RemoteException {
+  public TrackerState register(Player player) throws RemoteException {
     // if no player, set to primary
 
-    System.err.println("register playerId:" + playerId);
+    System.err.println("register playerId:" + player);
     System.err.println(trackerState.toString());
-    String primary = trackerState.getPrimary();
+    Player primary = trackerState.getPrimary();
 
-    if (primary == null || primary.isEmpty()) {
-      trackerState.setPrimary(playerId);
+    if (primary == null) {
+      trackerState.setPrimary(player);
       return trackerState;
     }
 
     // if has primary only, set to backup
-    String backup = trackerState.getBackup();
-    if (backup == null || backup.isEmpty()) {
-      trackerState.setBackup(playerId);
+    Player backup = trackerState.getBackup();
+    if (backup == null) {
+      trackerState.setBackup(player);
     }
     // return n, k, primary and backup
-    System.err.println("after register playerId:" + playerId);
+    System.err.println("after register playerId:" + player);
     System.err.println(trackerState.toString());
 
     return trackerState;
   }
 
   @Override
-  public void setPrimaryServer(String primaryServer) throws RemoteException {
+  public void setPrimaryServer(Player primaryServer) throws RemoteException {
     trackerState.setPrimary(primaryServer);
   }
 
   @Override
-  public void setBackupServer(String backupServer) throws RemoteException {
+  public void setBackupServer(Player backupServer) throws RemoteException {
     trackerState.setBackup(backupServer);
 
   }
