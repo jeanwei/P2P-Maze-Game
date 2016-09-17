@@ -13,8 +13,10 @@ import java.rmi.server.UnicastRemoteObject;
  * In addition, tracker will inform new players of current Primary and Secondary servers
  */
 public class Tracker implements TrackerInterface {
+
+  private int portNumber;
+
   private TrackerState trackerState = new TrackerState();
-  public int portNumber;
 
   public Tracker(int portNumber, int n, int k) {
     this.portNumber = portNumber;
@@ -22,41 +24,30 @@ public class Tracker implements TrackerInterface {
     this.trackerState.k = k;
   }
 
-
   public int getPortNumber() {
     return portNumber;
-  }
-
-  public void setPortNumber(int portNumber) {
-    this.portNumber = portNumber;
   }
 
   public TrackerState getTrackerState() {
     return trackerState;
   }
 
-  public void setTrackerState(TrackerState trackerState) {
-    this.trackerState = trackerState;
-  }
-
   public TrackerState register(Player player) throws RemoteException {
-    // if no player, set to primary
 
     System.err.println("register playerId:" + player);
     System.err.println(trackerState.toString());
-    Player primary = trackerState.getPrimary();
 
+    Player primary = trackerState.getPrimary();
     if (primary == null) {
       trackerState.setPrimary(player);
       return trackerState;
     }
 
-    // if has primary only, set to backup
     Player backup = trackerState.getBackup();
     if (backup == null) {
       trackerState.setBackup(player);
     }
-    // return n, k, primary and backup
+
     System.err.println("after register playerId:" + player);
     System.err.println(trackerState.toString());
 
@@ -98,7 +89,7 @@ public class Tracker implements TrackerInterface {
       System.err.println("portNumber: " + portNumber);
       System.err.println("n: " + n);
       System.err.println("k: " + k);
-    } catch (Exception e) {
+    } catch (RemoteException e) {
       System.err.println("Server exception: " + e.toString());
       e.printStackTrace();
     }
