@@ -20,9 +20,9 @@ public interface TrackerInterface extends Remote {
 //
 //    public void setPortNumber(String portNumber) throws RemoteException;
 
-    public TrackerState register(String playerId) throws RemoteException;
+  public TrackerState register(String playerId) throws RemoteException;
 
-    public void setPrimaryServer(String primaryServer) throws RemoteException;
+  public void setPrimaryServer(String primaryServer) throws RemoteException;
 
-    public void setBackupServer(String backupServer) throws RemoteException;
+  public void setBackupServer(String backupServer) throws RemoteException;
 }

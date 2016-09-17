@@ -13,56 +13,55 @@ import java.rmi.server.UnicastRemoteObject;
  * In addition, tracker will inform new players of current Primary and Secondary servers
  */
 public class Tracker implements TrackerInterface {
-    private TrackerState trackerState = new TrackerState();
-    public int portNumber;
+  private TrackerState trackerState = new TrackerState();
+  public int portNumber;
 
-    public Tracker(int portNumber, int n, int k) {
-        this.portNumber = portNumber;
-        this.trackerState.n = n;
-        this.trackerState.k = k;
-    }
-
+  public Tracker(int portNumber, int n, int k) {
+    this.portNumber = portNumber;
+    this.trackerState.n = n;
+    this.trackerState.k = k;
+  }
 
 
   public int getPortNumber() {
-        return portNumber;
-    }
+    return portNumber;
+  }
 
-    public void setPortNumber(int portNumber) {
-        this.portNumber = portNumber;
-    }
+  public void setPortNumber(int portNumber) {
+    this.portNumber = portNumber;
+  }
 
-    public TrackerState getTrackerState() {
-      return trackerState;
-    }
+  public TrackerState getTrackerState() {
+    return trackerState;
+  }
 
-    public void setTrackerState(TrackerState trackerState) {
-      this.trackerState = trackerState;
-    }
+  public void setTrackerState(TrackerState trackerState) {
+    this.trackerState = trackerState;
+  }
 
   public TrackerState register(String playerId) throws RemoteException {
-        // if no player, set to primary
+    // if no player, set to primary
 
     System.err.println("register playerId:" + playerId);
     System.err.println(trackerState.toString());
     String primary = trackerState.getPrimary();
 
-    if (primary == null || primary.isEmpty()){
+    if (primary == null || primary.isEmpty()) {
       trackerState.setPrimary(playerId);
       return trackerState;
     }
 
-        // if has primary only, set to backup
+    // if has primary only, set to backup
     String backup = trackerState.getBackup();
-    if (backup == null || backup.isEmpty()){
+    if (backup == null || backup.isEmpty()) {
       trackerState.setBackup(playerId);
     }
-        // return n, k, primary and backup
+    // return n, k, primary and backup
     System.err.println("after register playerId:" + playerId);
     System.err.println(trackerState.toString());
 
-        return trackerState;
-    }
+    return trackerState;
+  }
 
   @Override
   public void setPrimaryServer(String primaryServer) throws RemoteException {
@@ -77,32 +76,31 @@ public class Tracker implements TrackerInterface {
 
   public static void main(String args[]) {
 
-        if (args.length < 3) {
-            System.err.println("Invalid input to create tracker");
-            return;
-        }
-
-        try {
-            int portNumber = Integer.parseInt(args[0]);
-            int n = Integer.parseInt(args[1]);
-            int k = Integer.parseInt(args[2]);
-
-            Tracker tracker = new Tracker(portNumber, n, k);
-            TrackerInterface stub = (TrackerInterface) UnicastRemoteObject.exportObject(tracker, 0);
-
-            // Bind the remote object's stub in the registry
-          String serverIP = "localhost";
-          Registry registry = LocateRegistry.getRegistry(serverIP, portNumber);
-            registry.bind("Tracker", stub);
-
-
-            System.err.println("Tracker Server ready");
-            System.err.println("portNumber: " + portNumber);
-            System.err.println("n: " + n);
-            System.err.println("k: " + k);
-        } catch (Exception e) {
-            System.err.println("Server exception: " + e.toString());
-            e.printStackTrace();
-        }
+    if (args.length < 3) {
+      System.err.println("Invalid input to create tracker");
+      return;
     }
+
+    try {
+      int portNumber = Integer.parseInt(args[0]);
+      int n = Integer.parseInt(args[1]);
+      int k = Integer.parseInt(args[2]);
+
+      Tracker tracker = new Tracker(portNumber, n, k);
+      TrackerInterface stub = (TrackerInterface) UnicastRemoteObject.exportObject(tracker, 0);
+
+      // Bind the remote object's stub in the registry
+      String serverIP = "localhost";
+      Registry registry = LocateRegistry.getRegistry(serverIP, portNumber);
+      registry.bind("Tracker", stub);
+
+      System.err.println("Tracker Server ready");
+      System.err.println("portNumber: " + portNumber);
+      System.err.println("n: " + n);
+      System.err.println("k: " + k);
+    } catch (Exception e) {
+      System.err.println("Server exception: " + e.toString());
+      e.printStackTrace();
+    }
+  }
 }

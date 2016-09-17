@@ -16,113 +16,112 @@ import java.rmi.server.UnicastRemoteObject;
  */
 public class Game implements GameInterface {
 
-    public static final int CMD_GAME_STATE  = 0;
-    public static final int CMD_MOVE_WEST   = 1;
-    public static final int CMD_MOVE_SOUTH  = 2;
-    public static final int CMD_MOVE_EAST   = 3;
-    public static final int CMD_MOVE_NORTH  = 4;
-    public static final int CMD_EXIT        = 9;
+  public static final int CMD_GAME_STATE = 0;
+  public static final int CMD_MOVE_WEST = 1;
+  public static final int CMD_MOVE_SOUTH = 2;
+  public static final int CMD_MOVE_EAST = 3;
+  public static final int CMD_MOVE_NORTH = 4;
+  public static final int CMD_EXIT = 9;
 
-    public String playerId = null;
-    public int portNumber;
+  public String playerId = null;
+  public int portNumber;
 
-    private GameState gameState = new GameState();
+  private GameState gameState = new GameState();
 
-    private Game() {
+  private Game() {
 
+  }
+
+  public Game(int portNumber, String playerId) {
+    this.portNumber = portNumber;
+    this.playerId = playerId;
+  }
+
+  public Game(int portNumber, int n, int k, String playerId) {
+    this.portNumber = portNumber;
+    this.gameState.n = n;
+    this.gameState.k = k;
+    this.playerId = playerId;
+  }
+
+  public int getPortNumber() {
+    return portNumber;
+  }
+
+  public void setPortNumber(int portNumber) {
+    this.portNumber = portNumber;
+  }
+
+  public String getPlayerId() {
+    return playerId;
+  }
+
+  public void setPlayerId(String playerId) {
+    this.playerId = playerId;
+  }
+
+
+  private void contactTracker(Registry registry) throws RemoteException, NotBoundException {
+    TrackerInterface stub = (TrackerInterface) registry.lookup("Tracker");
+    TrackerState trackerState = stub.register(playerId);
+    System.out.println("Tracker response: " + trackerState.toString());
+    gameState.setN(trackerState.getN());
+    gameState.setK(trackerState.getK());
+    gameState.setPrimary(trackerState.getPrimary());
+    gameState.setBackup(trackerState.getBackup());
+    System.out.println("Tracker response: " + gameState.toString());
+
+  }
+
+  private void initPosition() {
+
+  }
+
+  private void run() {
+
+  }
+
+  public static void main(String[] args) {
+    if (args.length < 2) {
+      System.err.println("Invalid input to start the game");
+      return;
     }
 
-    public Game(int portNumber, String playerId) {
-      this.portNumber = portNumber;
-      this.playerId = playerId;
+    System.err.println("s1");
+    int portNumber = Integer.parseInt(args[0]);
+    String playerId = args[1];
+    if (playerId == null || playerId.length() != 2) {
+      System.err.println("Invalid player id");
+      return;
     }
+    try {
+      System.err.println("s2");
+      String serverIP = "localhost";
+      Registry registry = LocateRegistry.getRegistry(serverIP, portNumber);
 
-    public Game(int portNumber, int n, int k, String playerId) {
-        this.portNumber = portNumber;
-        this.gameState.n = n;
-        this.gameState.k = k;
-        this.playerId = playerId;
+      Game game = new Game(portNumber, playerId);
+
+      // contact tracker and get tracker state: n, k, primary, backup
+      game.contactTracker(registry);
+
+      // generate random position and call move (repeat till a move is valid)
+      game.initPosition();
+
+      // infinite loop that waits for user input and make a move
+      game.run();
+
+      GameInterface iGame = (GameInterface) UnicastRemoteObject.exportObject(game, 0);
+
+      // Bind the remote object's stub in the registry
+      registry.bind(playerId, iGame);
+
+      System.err.println("Player ready: " + playerId);
+
+    } catch (Exception e) {
+      System.err.println("Client exception: " + e.toString());
+      e.printStackTrace();
     }
-
-    public int getPortNumber() {
-        return portNumber;
-    }
-
-    public void setPortNumber(int portNumber) {
-        this.portNumber = portNumber;
-    }
-
-    public String getPlayerId() {
-        return playerId;
-    }
-
-    public void setPlayerId(String playerId) {
-        this.playerId = playerId;
-    }
-
-
-    private void contactTracker(Registry registry) throws RemoteException, NotBoundException {
-      TrackerInterface stub = (TrackerInterface) registry.lookup("Tracker");
-      TrackerState trackerState = stub.register(playerId);
-      System.out.println("Tracker response: " + trackerState.toString());
-      gameState.setN(trackerState.getN());
-      gameState.setK(trackerState.getK());
-      gameState.setPrimary(trackerState.getPrimary());
-      gameState.setBackup(trackerState.getBackup());
-      System.out.println("Tracker response: " + gameState.toString());
-
-    }
-
-    private void initPosition() {
-
-    }
-
-    private void run() {
-
-    }
-
-    public static void main(String[] args) {
-        if (args.length < 2) {
-            System.err.println("Invalid input to start the game");
-            return;
-        }
-
-        System.err.println("s1");
-        int portNumber = Integer.parseInt(args[0]);
-        String playerId = args[1];
-        if (playerId == null || playerId.length() != 2) {
-            System.err.println("Invalid player id");
-            return;
-        }
-        try {
-          System.err.println("s2");
-          String serverIP = "localhost";
-          Registry registry = LocateRegistry.getRegistry(serverIP, portNumber);
-
-            Game game = new Game(portNumber, playerId);
-
-            // contact tracker and get tracker state: n, k, primary, backup
-            game.contactTracker(registry);
-
-            // generate random position and call move (repeat till a move is valid)
-            game.initPosition();
-
-            // infinite loop that waits for user input and make a move
-            game.run();
-
-
-            GameInterface iGame = (GameInterface) UnicastRemoteObject.exportObject(game, 0);
-
-            // Bind the remote object's stub in the registry
-            registry.bind(playerId, iGame);
-
-            System.err.println("Player ready: " + playerId);
-
-        } catch (Exception e) {
-            System.err.println("Client exception: " + e.toString());
-            e.printStackTrace();
-        }
-    }
+  }
 
   @Override
   public void setPrimary(String primary) throws RemoteException {
