@@ -43,4 +43,14 @@ public class TrackerState implements Serializable {
     void setBackup(String backup) {
         this.backup = backup;
     }
+
+    @Override
+    public String toString() {
+        return "TrackerState{" +
+            "n=" + n +
+            ", k=" + k +
+            ", primary='" + primary + '\'' +
+            ", backup='" + backup + '\'' +
+            '}';
+    }
 }

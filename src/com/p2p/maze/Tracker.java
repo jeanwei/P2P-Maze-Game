@@ -13,35 +13,18 @@ import java.rmi.server.UnicastRemoteObject;
  * In addition, tracker will inform new players of current Primary and Secondary servers
  */
 public class Tracker implements TrackerInterface {
-    public int n = 0;
-    public int k = 0;
+    private TrackerState trackerState = new TrackerState();
     public String portNumber;
-    public String primaryServer = "";
-    public String backupServer = "";
 
     public Tracker(String portNumber, int n, int k) {
         this.portNumber = portNumber;
-        this.n = n;
-        this.k = k;
+        this.trackerState.n = n;
+        this.trackerState.k = k;
     }
 
-    public int getN() {
-        return n;
-    }
 
-    public void setN(int n) {
-        this.n = n;
-    }
 
-    public int getK() {
-        return k;
-    }
-
-    public void setK(int k) {
-        this.k = k;
-    }
-
-    public String getPortNumber() {
+  public String getPortNumber() {
         return portNumber;
     }
 
@@ -49,33 +32,50 @@ public class Tracker implements TrackerInterface {
         this.portNumber = portNumber;
     }
 
-    public String getPrimaryServer() {
-        return primaryServer;
+    public TrackerState getTrackerState() {
+      return trackerState;
     }
 
-    public void setPrimaryServer(String primaryServer) throws RemoteException {
-        this.primaryServer = primaryServer;
+    public void setTrackerState(TrackerState trackerState) {
+      this.trackerState = trackerState;
     }
 
-    public String getBackupServer() {
-        return backupServer;
-    }
-
-    public void setBackupServer(String backupServer) {
-        this.backupServer = backupServer;
-    }
-
-    public TrackerState register(String playerId) throws RemoteException {
+  public TrackerState register(String playerId) throws RemoteException {
         // if no player, set to primary
 
-        // if has primary only, set to backup
+    System.err.println("register playerId:" + playerId);
+    System.err.println(trackerState.toString());
+    String primary = trackerState.getPrimary();
 
-        // return n, k, primary and backup
-
-        return null;
+    if (primary == null || primary.isEmpty()){
+      trackerState.setPrimary(playerId);
+      return trackerState;
     }
 
-    public static void main(String args[]) {
+        // if has primary only, set to backup
+    String backup = trackerState.getBackup();
+    if (backup == null || backup.isEmpty()){
+      trackerState.setBackup(backup);
+    }
+        // return n, k, primary and backup
+    System.err.println("after register playerId:" + playerId);
+    System.err.println(trackerState.toString());
+
+        return trackerState;
+    }
+
+  @Override
+  public void setPrimaryServer(String primaryServer) throws RemoteException {
+    trackerState.setPrimary(primaryServer);
+  }
+
+  @Override
+  public void setBackupServer(String backupServer) throws RemoteException {
+    trackerState.setBackup(backupServer);
+
+  }
+
+  public static void main(String args[]) {
 
         if (args.length < 3) {
             System.err.println("Invalid input to create tracker");
@@ -91,7 +91,8 @@ public class Tracker implements TrackerInterface {
             TrackerInterface stub = (TrackerInterface) UnicastRemoteObject.exportObject(tracker, 0);
 
             // Bind the remote object's stub in the registry
-            Registry registry = LocateRegistry.getRegistry();
+          String serverIP = "localhost";
+          Registry registry = LocateRegistry.getRegistry(serverIP, Integer.parseInt(portNumber));
             registry.bind("Tracker", stub);
 
 

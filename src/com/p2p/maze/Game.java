@@ -1,5 +1,7 @@
 package com.p2p.maze;
 
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
@@ -24,36 +26,22 @@ public class Game implements GameInterface {
     public String playerId = null;
     public String portNumber = "";
 
-    public int n = 0;
-    public int k = 0;
-    public String primaryServer = "";
-    public String backupServer = "";
+    private GameState gameState = new GameState();
 
     private Game() {
 
     }
 
+    public Game(String portNumber, String playerId) {
+      this.portNumber = portNumber;
+      this.playerId = playerId;
+    }
+
     public Game(String portNumber, int n, int k, String playerId) {
         this.portNumber = portNumber;
-        this.n = n;
-        this.k = k;
+        this.gameState.n = n;
+        this.gameState.k = k;
         this.playerId = playerId;
-    }
-
-    public int getN() {
-        return n;
-    }
-
-    public void setN(int n) {
-        this.n = n;
-    }
-
-    public int getK() {
-        return k;
-    }
-
-    public void setK(int k) {
-        this.k = k;
     }
 
     public String getPortNumber() {
@@ -64,22 +52,6 @@ public class Game implements GameInterface {
         this.portNumber = portNumber;
     }
 
-    public String getPrimary() {
-        return primaryServer;
-    }
-
-    public void setPrimary(String primaryServer) {
-        this.primaryServer = primaryServer;
-    }
-
-    public String getBackup() {
-        return backupServer;
-    }
-
-    public void setBackup(String backupServer) {
-        this.backupServer = backupServer;
-    }
-
     public String getPlayerId() {
         return playerId;
     }
@@ -88,7 +60,16 @@ public class Game implements GameInterface {
         this.playerId = playerId;
     }
 
-    private void contactTracker() {
+
+    private void contactTracker(Registry registry) throws RemoteException, NotBoundException {
+      TrackerInterface stub = (TrackerInterface) registry.lookup("Tracker");
+      TrackerState trackerState = stub.register(playerId);
+      System.out.println("Tracker response: " + trackerState.toString());
+      gameState.setN(trackerState.getN());
+      gameState.setK(trackerState.getK());
+      gameState.setPrimary(trackerState.getPrimary());
+      gameState.setBackup(trackerState.getBackup());
+      System.out.println("Tracker response: " + gameState.toString());
 
     }
 
@@ -101,23 +82,27 @@ public class Game implements GameInterface {
     }
 
     public static void main(String[] args) {
-        if (args.length < 3) {
+        if (args.length < 2) {
             System.err.println("Invalid input to start the game");
             return;
         }
 
         System.err.println("s1");
-        String portNumber = args[1];
-        String playerId = args[2];
+        String portNumber = args[0];
+        String playerId = args[1];
         if (playerId == null || playerId.length() != 2) {
             System.err.println("Invalid player id");
             return;
         }
         try {
-            Game game = new Game();
+          System.err.println("s2");
+          String serverIP = "localhost";
+          Registry registry = LocateRegistry.getRegistry(serverIP, Integer.parseInt(portNumber));
+
+            Game game = new Game(portNumber, playerId);
 
             // contact tracker and get tracker state: n, k, primary, backup
-            game.contactTracker();
+            game.contactTracker(registry);
 
             // generate random position and call move (repeat till a move is valid)
             game.initPosition();
@@ -125,34 +110,6 @@ public class Game implements GameInterface {
             // infinite loop that waits for user input and make a move
             game.run();
 
-
-            System.err.println("s2");
-            Registry registry = LocateRegistry.getRegistry();
-            TrackerInterface stub = (TrackerInterface) registry.lookup("Tracker");
-            String primary = stub.getPrimaryServer();
-            String backup = stub.getBackupServer();
-            int n = stub.getN();
-            int k = stub.getK();
-
-            System.out.println("Tracker response: ");
-            System.out.println("[N]: " + n);
-            System.out.println("[k]: " + k);
-            System.out.println("[primary]: " + primary);
-            System.out.println("[backup]: " + backup);
-
-            if (primary == null || primary.length() < 1) {
-                System.out.println("Update primary server: ");
-                stub.setPrimaryServer(playerId);
-                game.setPrimary(playerId);
-                TrackerInterface stub2 = (TrackerInterface) registry.lookup("Tracker");
-                System.out.println("Updated primary server: " + stub2.getPrimaryServer());
-            } else if (backup == null || backup.length() < 1) {
-                System.out.println("Update backup server: ");
-                stub.setBackupServer(playerId);
-                game.setBackup(playerId);
-                TrackerInterface stub2 = (TrackerInterface) registry.lookup("Tracker");
-                System.out.println("Updated backup server: " + stub2.getBackupServer());
-            }
 
             GameInterface iGame = (GameInterface) UnicastRemoteObject.exportObject(game, 0);
 
@@ -166,4 +123,49 @@ public class Game implements GameInterface {
             e.printStackTrace();
         }
     }
+
+  @Override
+  public void setPrimary(String primary) throws RemoteException {
+
+  }
+
+  @Override
+  public void setBackup(String backup) throws RemoteException {
+
+  }
+
+  @Override
+  public GameState initPlayer(String playerId) throws RemoteException {
+    return null;
+  }
+
+  @Override
+  public GameState getGameState() throws RemoteException {
+    return null;
+  }
+
+  @Override
+  public GameState move(int move) throws RemoteException {
+    return null;
+  }
+
+  @Override
+  public void exit(String playerId) throws RemoteException {
+
+  }
+
+  @Override
+  public boolean ping() throws RemoteException {
+    return false;
+  }
+
+  @Override
+  public boolean syncGameState() throws RemoteException {
+    return false;
+  }
+
+  @Override
+  public void promoteToBackupServer(String playerId, GameState gameState) throws RemoteException {
+
+  }
 }
