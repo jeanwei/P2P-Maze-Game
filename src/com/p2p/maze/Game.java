@@ -93,27 +93,22 @@ public class Game implements GameInterface {
     try {
       System.err.println("s2");
 
-      InetAddress IP=InetAddress.getLocalHost();
-      System.out.println("IP of my system is := "+IP.getHostAddress());
-      String localServerIp = IP.getHostAddress();
+      Registry trackerRegistry = LocateRegistry.getRegistry(trackerIpAddress, portNumber);
 
-      Game game = new Game(playerId, localServerIp, portNumber);
+      String playerIpAddress = InetAddress.getLocalHost().getHostAddress();
+      System.out.println("IP of my system is := "+ playerIpAddress);
 
-      // get Tracker registry
-      Registry registry = LocateRegistry.getRegistry(trackerIpAddress, portNumber);
+      Game game = new Game(playerId, playerIpAddress, portNumber);
 
-      game.contactTracker(registry);
+      game.contactTracker(trackerRegistry);
 
       game.init();
 
-      // infinite loop that waits for user input and make a move
       game.run();
 
       GameInterface iGame = (GameInterface) UnicastRemoteObject.exportObject(game, 0);
 
-      // Bind the remote object's stub in the registry
-
-      Registry playerRegistry = LocateRegistry.getRegistry(localServerIp, portNumber);
+      Registry playerRegistry = LocateRegistry.getRegistry(playerIpAddress, portNumber);
       playerRegistry.rebind(playerId, iGame);
 
       System.out.println("Player ready: " + playerId);
