@@ -24,7 +24,7 @@ public class Game implements GameInterface {
     public static final int CMD_EXIT        = 9;
 
     public String playerId = null;
-    public String portNumber = "";
+    public int portNumber;
 
     private GameState gameState = new GameState();
 
@@ -32,23 +32,23 @@ public class Game implements GameInterface {
 
     }
 
-    public Game(String portNumber, String playerId) {
+    public Game(int portNumber, String playerId) {
       this.portNumber = portNumber;
       this.playerId = playerId;
     }
 
-    public Game(String portNumber, int n, int k, String playerId) {
+    public Game(int portNumber, int n, int k, String playerId) {
         this.portNumber = portNumber;
         this.gameState.n = n;
         this.gameState.k = k;
         this.playerId = playerId;
     }
 
-    public String getPortNumber() {
+    public int getPortNumber() {
         return portNumber;
     }
 
-    public void setPortNumber(String portNumber) {
+    public void setPortNumber(int portNumber) {
         this.portNumber = portNumber;
     }
 
@@ -88,7 +88,7 @@ public class Game implements GameInterface {
         }
 
         System.err.println("s1");
-        String portNumber = args[0];
+        int portNumber = Integer.parseInt(args[0]);
         String playerId = args[1];
         if (playerId == null || playerId.length() != 2) {
             System.err.println("Invalid player id");
@@ -97,7 +97,7 @@ public class Game implements GameInterface {
         try {
           System.err.println("s2");
           String serverIP = "localhost";
-          Registry registry = LocateRegistry.getRegistry(serverIP, Integer.parseInt(portNumber));
+          Registry registry = LocateRegistry.getRegistry(serverIP, portNumber);
 
             Game game = new Game(portNumber, playerId);
 

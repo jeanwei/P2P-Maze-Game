@@ -14,9 +14,9 @@ import java.rmi.server.UnicastRemoteObject;
  */
 public class Tracker implements TrackerInterface {
     private TrackerState trackerState = new TrackerState();
-    public String portNumber;
+    public int portNumber;
 
-    public Tracker(String portNumber, int n, int k) {
+    public Tracker(int portNumber, int n, int k) {
         this.portNumber = portNumber;
         this.trackerState.n = n;
         this.trackerState.k = k;
@@ -24,11 +24,11 @@ public class Tracker implements TrackerInterface {
 
 
 
-  public String getPortNumber() {
+  public int getPortNumber() {
         return portNumber;
     }
 
-    public void setPortNumber(String portNumber) {
+    public void setPortNumber(int portNumber) {
         this.portNumber = portNumber;
     }
 
@@ -83,7 +83,7 @@ public class Tracker implements TrackerInterface {
         }
 
         try {
-            String portNumber = args[0];
+            int portNumber = Integer.parseInt(args[0]);
             int n = Integer.parseInt(args[1]);
             int k = Integer.parseInt(args[2]);
 
@@ -92,7 +92,7 @@ public class Tracker implements TrackerInterface {
 
             // Bind the remote object's stub in the registry
           String serverIP = "localhost";
-          Registry registry = LocateRegistry.getRegistry(serverIP, Integer.parseInt(portNumber));
+          Registry registry = LocateRegistry.getRegistry(serverIP, portNumber);
             registry.bind("Tracker", stub);
 
 
