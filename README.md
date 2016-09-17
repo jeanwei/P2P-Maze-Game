@@ -19,7 +19,7 @@ e.g. java com.p2p.maze.Game 1099 t1
 Note: A.B.C.D is IP address, currently ip and portNumber is not in use.
 6. Repeat step 5 to create more players.
 
-javac com/p2p/maze/*.java
+javac -d ../build/ com/p2p/maze/*.java
 start rmiregistry 1099
 java com.p2p.maze.Tracker 1099 32 5
 java com.p2p.maze.Game 1099 t1
