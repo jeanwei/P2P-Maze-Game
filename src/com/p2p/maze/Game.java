@@ -93,7 +93,7 @@ public class Game implements GameInterface {
 
     try {
       System.err.println("s2");
-      String serverIP = "localhost";
+
       Registry registry = LocateRegistry.getRegistry(trackerIpAddress, portNumber);
 
       Game game = new Game(portNumber, playerId);

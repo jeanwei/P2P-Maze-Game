@@ -90,7 +90,7 @@ public class Tracker implements TrackerInterface {
       System.err.println("portNumber: " + portNumber);
       System.err.println("n: " + n);
       System.err.println("k: " + k);
-    } catch (RemoteException | AlreadyBoundException e) {
+    } catch (RemoteException e) {
       System.err.println("Server exception: " + e.toString());
       e.printStackTrace();
     }
