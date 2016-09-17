@@ -1,12 +1,10 @@
 package com.p2p.maze;
 
-import java.rmi.RemoteException;
-
 /**
- * Created by ufinity on 9/4/2016.
+ * GameState map - Game State
+ *
  */
-public interface GameState extends TrackerInfo {
-  public String getPlayerId() throws RemoteException;
+public class GameState extends TrackerState {
 
-  public void setPlayerId(String playerId) throws RemoteException;
+
 }
