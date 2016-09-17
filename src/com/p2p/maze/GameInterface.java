@@ -35,7 +35,7 @@ public interface GameInterface extends Remote {
    * @param move movement direction (1: west, 2: south, 3: east, 4: north)
    * @return Game state
    */
-  public GameState move(int move) throws RemoteException;
+  public GameState move(Game.Command move) throws RemoteException;
 
   /**
    * [Primary] Player exit the game

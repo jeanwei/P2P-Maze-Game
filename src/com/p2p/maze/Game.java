@@ -17,12 +17,18 @@ import java.rmi.server.UnicastRemoteObject;
  */
 public class Game implements GameInterface {
 
-  public static final int CMD_GAME_STATE = 0;
-  public static final int CMD_MOVE_WEST = 1;
-  public static final int CMD_MOVE_SOUTH = 2;
-  public static final int CMD_MOVE_EAST = 3;
-  public static final int CMD_MOVE_NORTH = 4;
-  public static final int CMD_EXIT = 9;
+  public enum Command {
+    GAME_STATE(0),
+    MOVE_WEST(1),
+    MOVE_SOUTH(2),
+    MOVE_EAST(3),
+    MOVE_NORTH(4),
+    EXIT(9);
+
+    private final int id;
+    Command(int id) { this.id = id; }
+    public int getValue() { return id; }
+  }
 
   private Player player;
   private GameState gameState = new GameState();
@@ -128,7 +134,23 @@ public class Game implements GameInterface {
   }
 
   @Override
-  public GameState move(int move) throws RemoteException {
+  public GameState move(Command move) throws RemoteException {
+    switch (move) {
+      case MOVE_WEST:
+        break;
+
+      case MOVE_SOUTH:
+        break;
+
+      case MOVE_EAST:
+        break;
+
+      case MOVE_NORTH:
+        break;
+
+      default:
+        System.err.println("Unrecognized move command");
+    }
     return null;
   }
 
