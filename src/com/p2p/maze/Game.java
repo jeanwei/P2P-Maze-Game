@@ -1,5 +1,6 @@
 package com.p2p.maze;
 
+import java.net.InetAddress;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -23,42 +24,23 @@ public class Game implements GameInterface {
   public static final int CMD_MOVE_NORTH = 4;
   public static final int CMD_EXIT = 9;
 
-  private String playerId = null;
-  private int portNumber;
+  private Player player;
   private GameState gameState = new GameState();
 
-  public Game(int portNumber, String playerId) {
-    this.portNumber = portNumber;
-    this.playerId = playerId;
+  public Game(String playerId, String localServerIp, int portNumber) {
+    this.player = new Player(playerId, localServerIp, portNumber);
   }
-
-  public int getPortNumber() {
-    return portNumber;
-  }
-
-  public void setPortNumber(int portNumber) {
-    this.portNumber = portNumber;
-  }
-
-  public String getPlayerId() {
-    return playerId;
-  }
-
-  public void setPlayerId(String playerId) {
-    this.playerId = playerId;
-  }
-
 
   /**
    * Contact tracker when player join the game, receive tracker state: n, k, primary, backup
    *
-   * @param registry
+   * @param registry rmiRegistry
    * @throws RemoteException
    * @throws NotBoundException
    */
   private void contactTracker(Registry registry) throws RemoteException, NotBoundException {
     TrackerInterface stub = (TrackerInterface) registry.lookup("Tracker");
-    TrackerState trackerState = stub.register(playerId);
+    TrackerState trackerState = stub.register(player);
     System.out.println("Tracker response: " + trackerState.toString());
     gameState.setN(trackerState.getN());
     gameState.setK(trackerState.getK());
@@ -94,9 +76,14 @@ public class Game implements GameInterface {
     try {
       System.err.println("s2");
 
-      Registry registry = LocateRegistry.getRegistry(trackerIpAddress, portNumber);
+      InetAddress IP=InetAddress.getLocalHost();
+      System.out.println("IP of my system is := "+IP.getHostAddress());
+      String localServerIp = IP.getHostAddress();
 
-      Game game = new Game(portNumber, playerId);
+      Game game = new Game(playerId, localServerIp, portNumber);
+
+      // get Tracker registry
+      Registry registry = LocateRegistry.getRegistry(trackerIpAddress, portNumber);
 
       game.contactTracker(registry);
 
@@ -108,7 +95,9 @@ public class Game implements GameInterface {
       GameInterface iGame = (GameInterface) UnicastRemoteObject.exportObject(game, 0);
 
       // Bind the remote object's stub in the registry
-      registry.rebind(playerId, iGame);
+
+      Registry playerRegistry = LocateRegistry.getRegistry(localServerIp, portNumber);
+      playerRegistry.rebind(playerId, iGame);
 
       System.out.println("Player ready: " + playerId);
 
