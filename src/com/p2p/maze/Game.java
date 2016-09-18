@@ -390,11 +390,8 @@ public class Game implements GameInterface {
   private class KeepAliveTask extends TimerTask {
     public void run() {
       if (isPrimary()) {
-        System.out.println();
-
         Player backup = gameState.getBackup();
         if (backup == null) {
-          System.out.println("Skip ping: no backup server found.");
           return;
         }
         try {
