@@ -1,13 +1,17 @@
 package com.p2p.maze;
 
 import java.net.InetAddress;
-import java.rmi.NoSuchObjectException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Game
@@ -106,6 +110,8 @@ public class Game implements GameInterface {
           gameState = new GameState(trackerState);
           System.out.println("contactTracker reconnected GameState: " + gameState.toString());
           server = gameState.getPrimary();
+          serverRegistry = LocateRegistry.getRegistry(server.getIp(), server.getPortNumber());
+          serverGameInterface = (GameInterface) serverRegistry.lookup(server.getPlayerId());
         }
         System.err.println("retry to connect to server: " + server.getPlayerId());
         Thread.sleep(2000); // sleep for 2000ms and try again
@@ -472,6 +478,9 @@ public class Game implements GameInterface {
 
     private void handleBackupServerDown() {
       // remove current backup from player list
+      if (gameState.getBackup() != null){
+        System.err.println("backup down : " + gameState.getBackup().getPlayerId());
+      }
       gameState.exitPlayer(gameState.getBackup());
       gameState.setBackup(null);
 
@@ -481,6 +490,7 @@ public class Game implements GameInterface {
 
 
     private void handlePrimaryServerDown() {
+      System.err.println("primary down, self " + player.getPlayerId() + "  as primary");
       // remove backup from player list
       gameState.exitPlayer(gameState.getPrimary());
       gameState.setBackup(null);
@@ -500,6 +510,7 @@ public class Game implements GameInterface {
         if (id.equals(gameState.getPrimary().getPlayerId())) {
           continue;
         }
+        System.err.println("promoting: " + id + " as new backup");
 
         Player next = gameState.getPlayers().get(id);
         try {
