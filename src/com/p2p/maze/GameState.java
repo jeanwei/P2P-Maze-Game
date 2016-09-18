@@ -75,8 +75,10 @@ public class GameState extends TrackerState{
     if(newPositionX < 0 || newPositionX > n-1
         || newPositionY < 0 || newPositionY > n-1)
       return false;
-    if(this.add(newPositionX, newPositionY, player))
+    if(this.add(newPositionX, newPositionY, player)){
       this.remove(oldPositionX, oldPositionY);
+      return true;
+    }
     return false;
   }
 
@@ -88,6 +90,7 @@ public class GameState extends TrackerState{
     while(!this.addTreasure(random.nextInt(n), random.nextInt(n))){
 
     }
+    treasurePosition.remove(positionX + "X" + positionY);
     remove(positionX, positionY);
   }
 
@@ -119,11 +122,12 @@ public class GameState extends TrackerState{
     maze[oldPositionX][oldPositionY] = null;
   }
 
-  public void exitPlayer(Player player){
+  public synchronized boolean exitPlayer(Player player){
     String playerId = player.getPlayerId();
     Position pos = this.playerPosition.get(playerId);
     this.remove(pos.posX, pos.posY);
     this.playerPosition.remove(playerId);
+    return true;
   }
 
   public Map<String, Integer> getScoreList() {
