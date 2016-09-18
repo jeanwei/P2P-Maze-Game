@@ -25,7 +25,7 @@ public class GameState extends TrackerState {
 
   public void initGameState(){
     this.maze = new String[n][n];
-    this.playerMap = new HashMap<String, Player>();
+    this.playerMap = new HashMap<>();
     Random random = new Random();
     for(int i = 0; i < k; i++){
       if(!this.addTreasure(random.nextInt(n), random.nextInt(n))){
@@ -36,6 +36,9 @@ public class GameState extends TrackerState {
 
   public synchronized void addNewPlayer(Player newPlayer) {
     Random random = new Random();
+    if(this.playerMap.keySet().size() >= this.n * this.n)
+      return;
+
     Player oldPlayer = playerMap.get(newPlayer.getPlayerId());
     if (oldPlayer != null){
       remove(oldPlayer.getPosition().posX, oldPlayer.getPosition().posY);
@@ -75,9 +78,13 @@ public class GameState extends TrackerState {
   private synchronized void collectTreasureAndUpdateScore(Player player, int positionX, int positionY) {
     Integer score = player.getScore();
     player.setScore(score++);
-    Random random = new Random();
-    while(!this.addTreasure(random.nextInt(n), random.nextInt(n))){
+    // only if player size and K smaller than size of map
+    if((this.playerMap.keySet().size() + this.k) <= this.n * this.n)
+    {
+      Random random = new Random();
+      while(!this.addTreasure(random.nextInt(n), random.nextInt(n))){
 
+      }
     }
     this.remove(positionX, positionY);
   }
@@ -112,6 +119,14 @@ public class GameState extends TrackerState {
 
   public Player getPlayer(String playerId) {
     return this.playerMap.get(playerId);
+  }
+
+  public void removePlayer(String playerId) {
+    this.playerMap.remove(playerId);
+  }
+
+  public Map<String, Player> getPlayers() {
+    return this.playerMap;
   }
 
   @Override

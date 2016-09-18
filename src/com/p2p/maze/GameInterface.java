@@ -48,9 +48,7 @@ public interface GameInterface extends Remote {
   /**
    * [Primary -> Backup] Promote new backup server when old one exit
    *
-   * @param player  new Primary Server ID
    * @param gameState game state
    */
-  public void promoteToBackupServer(Player player, GameState gameState) throws RemoteException;
-
+  public void promoteToBackupServer(GameState gameState) throws RemoteException;
 }
