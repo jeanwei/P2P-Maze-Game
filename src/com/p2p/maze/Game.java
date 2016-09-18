@@ -108,11 +108,6 @@ public class Game implements GameInterface {
         continue;
       }
 
-      if ("q".equals(input)) {
-        System.out.println("Exit!");
-        System.exit(0);
-      }
-
       System.out.println("input : " + input);
       System.out.println("-----------\n");
       Player primaryPlayer = gameState.getPrimary();
@@ -136,8 +131,10 @@ public class Game implements GameInterface {
           case '4':
             updateGameState(stub.move(player, Command.MOVE_NORTH));
             break;
-          case '5':
+          case '9':
             stub.exit(player);
+            System.out.println("Exit!");
+            System.exit(0);
             break;
 
         }
@@ -242,7 +239,7 @@ public class Game implements GameInterface {
 
   @Override
   public void exit(Player player) throws RemoteException {
-
+    gameState.exitPlayer(player);
   }
 
   @Override

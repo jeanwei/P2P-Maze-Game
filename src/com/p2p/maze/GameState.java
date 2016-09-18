@@ -119,11 +119,11 @@ public class GameState extends TrackerState{
     maze[oldPositionX][oldPositionY] = null;
   }
 
-  public void exitPlayer(String playerID)
-  {
-    Position pos = this.playerPosition.get(playerID);
+  public void exitPlayer(Player player){
+    String playerId = player.getPlayerId();
+    Position pos = this.playerPosition.get(playerId);
     this.remove(pos.posX, pos.posY);
-    this.playerPosition.remove(playerID);
+    this.playerPosition.remove(playerId);
   }
 
   public Map<String, Integer> getScoreList() {
