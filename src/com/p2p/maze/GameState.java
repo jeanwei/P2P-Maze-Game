@@ -38,6 +38,11 @@ public class GameState extends TrackerState {
     Random random = new Random();
     if(this.playerMap.keySet().size() >= this.n * this.n)
       return;
+
+    Player oldPlayer = playerMap.get(newPlayer.getPlayerId());
+    if (oldPlayer != null){
+      remove(oldPlayer.getPosition().posX, oldPlayer.getPosition().posY);
+    }
     this.playerMap.put(newPlayer.getPlayerId(), newPlayer);
     while(!this.add(random.nextInt(n), random.nextInt(n), newPlayer)){
 

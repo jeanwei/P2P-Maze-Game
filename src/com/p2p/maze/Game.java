@@ -37,6 +37,7 @@ public class Game implements GameInterface {
   private Player player;
   private Registry serverRegistry;
   private Registry trackerRegistry;
+   private GameInterface serverGameInterface;
   private GameState gameState;
 
   public Game(String playerId, String localServerIp, int portNumber) {
@@ -91,10 +92,10 @@ public class Game implements GameInterface {
       updatePlayer();
     } else if (server != null) {
       serverRegistry = LocateRegistry.getRegistry(server.getIp(), server.getPortNumber());
-      GameInterface stub = (GameInterface) serverRegistry.lookup(server.getPlayerId());
+      serverGameInterface = (GameInterface) serverRegistry.lookup(server.getPlayerId());      
       while(true) // only stop when successfully add new player inside the map
       {
-        gameState = stub.initPlayer(player);
+        gameState = serverGameInterface.initPlayer(player);
         // found its own player id inside the map, then add player success, then loop
         if(gameState.getPlayer(player.getPlayerId()) != null){
           break;
@@ -142,19 +143,20 @@ public class Game implements GameInterface {
       if (input == null || input.length() == 0){
         continue;
       }
+      Character commandChar = input.charAt(0);
 
-      System.out.println("input : " + input);
+      System.out.println("Command Char : " + commandChar);
       System.out.println("-----------\n");
       if (isPrimary()){
         try{
-          play(input.charAt(0));
+          play(commandChar);
         } catch (RemoteException | NotBoundException e) {
           e.printStackTrace();
         }
       } else {
         boolean primaryNotFound = false;
         try {
-          connectToServerAndPlay(gameState.getPrimary(), input.charAt(0));
+          connectToServerAndPlay(commandChar);
         } catch (RemoteException | NotBoundException e) {
           e.printStackTrace();
           primaryNotFound = true;
@@ -162,7 +164,11 @@ public class Game implements GameInterface {
 
         if (primaryNotFound){
           try {
-            connectToServerAndPlay(gameState.getBackup(), input.charAt(0));
+            Player backupServer = gameState.getBackup();
+            serverRegistry = LocateRegistry.getRegistry(backupServer.getIp(), backupServer.getPortNumber());
+            serverGameInterface = (GameInterface) serverRegistry.lookup(backupServer.getPlayerId());
+
+            connectToServerAndPlay(commandChar);
           } catch (RemoteException | NotBoundException e) {
             e.printStackTrace();
           }
@@ -197,32 +203,29 @@ public class Game implements GameInterface {
     }
   }
 
-  private void connectToServerAndPlay(Player serverPlayer, Character commandChar) throws RemoteException, NotBoundException {
-
-  // TODO: do not look for server inside while loop, only update new server when necessary
-    serverRegistry = LocateRegistry.getRegistry(serverPlayer.getIp(), serverPlayer.getPortNumber());
-    GameInterface stub = (GameInterface) serverRegistry.lookup(serverPlayer.getPlayerId());
-
+  private void connectToServerAndPlay(Character commandChar) throws RemoteException, NotBoundException {
     switch (commandChar){
       case '0':
-        updateGameState(stub.executeCommand(player, Command.GAME_STATE));
+        updateGameState(serverGameInterface.executeCommand(player, Command.GAME_STATE));
         break;
       case '1':
-        updateGameState(stub.executeCommand(player, Command.MOVE_WEST));
+        updateGameState(serverGameInterface.executeCommand(player, Command.MOVE_WEST));
         break;
       case '2':
-        updateGameState(stub.executeCommand(player, Command.MOVE_SOUTH));
+        updateGameState(serverGameInterface.executeCommand(player, Command.MOVE_SOUTH));
         break;
       case '3':
-        updateGameState(stub.executeCommand(player, Command.MOVE_EAST));
+        updateGameState(serverGameInterface.executeCommand(player, Command.MOVE_EAST));
         break;
       case '4':
-        updateGameState(stub.executeCommand(player, Command.MOVE_NORTH));
+        updateGameState(serverGameInterface.executeCommand(player, Command.MOVE_NORTH));
         break;
       case '9':
-        stub.executeCommand(player, Command.EXIT);
+        serverGameInterface.executeCommand(player, Command.EXIT);
         System.out.println("Exit!");
         System.exit(0);
+        break;
+      default:
         break;
 
     }
