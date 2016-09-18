@@ -7,10 +7,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 /**
  * Game
@@ -144,8 +141,8 @@ public class Game implements GameInterface {
   }
 
   private void refreshGameStateUI(){
-    System.out.println("game state after refreshing: " + gameState.toString());
-    System.out.println("player after refreshing: " + player.toString());
+//    System.out.println("game state after refreshing: " + gameState.toString());
+//    System.out.println("player after refreshing: " + player.toString());
   }
 
   /**
@@ -428,6 +425,7 @@ public class Game implements GameInterface {
 
   private void startKeepAlive() {
     if (isPrimary() || isBackup()) {
+      System.out.println("startKeepAlive");
       Timer timer = new Timer();
       timer.schedule(new KeepAliveTask(), 0, 2000);
     }
@@ -462,6 +460,7 @@ public class Game implements GameInterface {
           Registry primaryRegistry = LocateRegistry.getRegistry(primary.getIp(), primary.getPortNumber());
           GameInterface iPrimary = (GameInterface) primaryRegistry.lookup(primary.getPlayerId());
           iPrimary.ping();
+          System.err.println("Ping backup->primary : " + primary.getPlayerId());
 
         } catch (RemoteException | NotBoundException e) {
           System.err.println("Ping backup->primary failed");
@@ -494,6 +493,8 @@ public class Game implements GameInterface {
     }
 
     private void promote() {
+      List<Player> removeList = new ArrayList<>();
+
       for (String id : gameState.getPlayers().keySet()) {
 
         if (id.equals(gameState.getPrimary().getPlayerId())) {
@@ -509,12 +510,17 @@ public class Game implements GameInterface {
           break;
 
         } catch (RemoteException | NotBoundException e) {
-          gameState.exitPlayer(next); // remove non-contactable player
+          removeList.add(next);
           System.err.println("Unable to promote player: " + next.getPlayerId());
         }
       }
 
+      for (Player player : removeList) {
+        gameState.exitPlayer(player);
+      }
+
       notifyTracker();
+
       // TODO: notify all the players
     }
   }
