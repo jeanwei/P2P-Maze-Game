@@ -25,7 +25,7 @@ public class GameState extends TrackerState {
 
   public void initGameState(){
     this.maze = new String[n][n];
-    this.playerMap = new HashMap<String, Player>();
+    this.playerMap = new HashMap<>();
     Random random = new Random();
     for(int i = 0; i < k; i++){
       if(!this.addTreasure(random.nextInt(n), random.nextInt(n))){
@@ -108,6 +108,14 @@ public class GameState extends TrackerState {
 
   public Player getPlayer(String playerId) {
     return this.playerMap.get(playerId);
+  }
+
+  public void removePlayer(String playerId) {
+    this.playerMap.remove(playerId);
+  }
+
+  public Map<String, Player> getPlayers() {
+    return this.playerMap;
   }
 
   @Override
