@@ -1,12 +1,15 @@
 package com.p2p.maze;
 
 import java.net.InetAddress;
+import java.rmi.NoSuchObjectException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Game
@@ -125,6 +128,10 @@ public class Game implements GameInterface {
 
   private void run() {
     System.out.println("Player is playing: " + player.getPlayerId());
+
+    // if player is primary/backup server, it needs to ping every 2 sec
+    startKeepAlive();
+
     Scanner scanner = new Scanner(System.in);
     while (true) {
 
@@ -288,7 +295,7 @@ public class Game implements GameInterface {
 
   @Override
   public boolean ping() throws RemoteException {
-    return false;
+    return true;
   }
 
   @Override
@@ -299,6 +306,94 @@ public class Game implements GameInterface {
 
   @Override
   public void promoteToBackupServer(String playerId, GameState gameState) throws RemoteException {
+    this.gameState = gameState;
+    startKeepAlive();
+  }
 
+  private void startKeepAlive() {
+    if (isPrimary() || isBackup()) {
+      Timer timer = new Timer();
+      timer.schedule(new KeepAliveTask(), 0, 2000);
+    }
+  }
+
+  private class KeepAliveTask extends TimerTask {
+    public void run() {
+      if (isPrimary()) {
+        Player backup = gameState.getBackup();
+        if (backup == null) {
+          System.out.println("Skip ping: no backup server found.");
+          return;
+        }
+        try {
+          Registry backupRegistry = LocateRegistry.getRegistry(backup.getIp(), backup.getPortNumber());
+          GameInterface iBackup = (GameInterface) backupRegistry.lookup(backup.getPlayerId());
+          iBackup.ping();
+
+        } catch (RemoteException | NotBoundException e) {
+          System.err.println("Ping primary->backup failed!");
+          e.printStackTrace();
+          handleBackupServerDown();
+        }
+      } else if (isBackup()) {
+        Player primary = gameState.getPrimary();
+        if (primary == null) {
+          System.err.println("Error: Primary server missing!");
+          return;
+        }
+
+        try {
+          Registry primaryRegistry = LocateRegistry.getRegistry(primary.getIp(), primary.getPortNumber());
+          GameInterface iPrimary = (GameInterface) primaryRegistry.lookup(primary.getPlayerId());
+          iPrimary.ping();
+
+        } catch (RemoteException | NotBoundException e) {
+          System.err.println("Ping backup->primary failed");
+          e.printStackTrace();
+          handlePrimaryServerDown();
+        }
+      }
+    }
+
+    // promote next player to backup server
+    private void handleBackupServerDown() {
+      promote();
+    }
+
+    // promote self to primary and find next player as backup
+    private void handlePrimaryServerDown() {
+      gameState.setPrimary(player);
+      gameState.setBackup(null);
+      // TODO: remove backup from gameState.player list
+      promote();
+    }
+
+    private void promote() {
+      while (true) {
+        Player next = findNextAvailablePlayer();
+        if (next == null) {
+          System.err.println("Unable to promote any player to backup server");
+          return;
+        }
+
+        try {
+          gameState.setBackup(next);
+
+          Registry registry = LocateRegistry.getRegistry(next.getIp(), next.getPortNumber());
+          GameInterface stub = (GameInterface) registry.lookup(next.getPlayerId());
+          stub.promoteToBackupServer(player.getPlayerId(), gameState);
+          return;
+
+        } catch (RemoteException | NotBoundException e) {
+          e.printStackTrace();
+        }
+      }
+      // TODO: inform tracker
+    }
+
+    private Player findNextAvailablePlayer() {
+      // TODO: find next available player from PlayerList
+      return null;
+    }
   }
 }
