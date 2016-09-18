@@ -7,6 +7,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -137,15 +138,24 @@ public class Game implements GameInterface {
     startKeepAlive();
 
     Scanner scanner = new Scanner(System.in);
+    String input;
+    Character commandChar;
     while (true) {
 
-      String input = scanner.nextLine();
-      if (input == null || input.length() == 0){
+      try {
+        input = scanner.nextLine();
+        if (input == null || input.length() == 0){
+          continue;
+        }
+        commandChar = input.charAt(0);
+        System.out.println("Command Char : " + commandChar);
+
+      } catch (NoSuchElementException e) {
+        System.err.println("Unable to read command");
         continue;
       }
-      Character commandChar = input.charAt(0);
 
-      System.out.println("Command Char : " + commandChar);
+
       System.out.println("-----------\n");
       if (isPrimary()){
         try{
@@ -436,7 +446,7 @@ public class Game implements GameInterface {
 
     private void handlePrimaryServerDown() {
       // remove backup from player list
-      gameState.exitPlayer(gameState.getBackup());
+      gameState.exitPlayer(gameState.getPrimary());
       gameState.setBackup(null);
 
       // promote self to primary
@@ -447,13 +457,13 @@ public class Game implements GameInterface {
     }
 
     private void promote() {
-      while (true) {
-        Player next = findNextAvailablePlayer();
-        if (next == null) {
-          System.err.println("Unable to promote any player to backup server");
-          break;
+      for (String id : gameState.getPlayers().keySet()) {
+
+        if (id.equals(gameState.getPrimary().getPlayerId())) {
+          continue;
         }
 
+        Player next = gameState.getPlayers().get(id);
         try {
           Registry registry = LocateRegistry.getRegistry(next.getIp(), next.getPortNumber());
           GameInterface stub = (GameInterface) registry.lookup(next.getPlayerId());
@@ -462,22 +472,13 @@ public class Game implements GameInterface {
           break;
 
         } catch (RemoteException | NotBoundException e) {
-          e.printStackTrace();
+          gameState.exitPlayer(next); // remove non-contactable player
+          System.err.println("Unable to promote player: " + next.getPlayerId());
         }
       }
 
       notifyTracker();
       // TODO: notify all the players
-    }
-
-    private Player findNextAvailablePlayer() {
-      for (String id : gameState.getPlayers().keySet()) {
-        // get first non-primary player
-        if (!id.equals(gameState.getPrimary().getPlayerId())) {
-          return gameState.getPlayers().get(id);
-        }
-      }
-      return null;
     }
   }
 }
