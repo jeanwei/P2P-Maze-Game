@@ -40,6 +40,16 @@ public class Game implements GameInterface {
   }
 
   /**
+   * Check if current player is a primary server
+   *
+   * @return true if is primary
+   */
+  private boolean isPrimary() {
+    Player primaryServer = gameState.getPrimary();
+    return primaryServer != null && primaryServer.getPlayerId().equals(player.getPlayerId());
+  }
+
+  /**
    * Contact tracker when player join the game, receive tracker state: n, k, primary, backup
    *
    * @param registry rmiRegistry
@@ -49,28 +59,32 @@ public class Game implements GameInterface {
   private void contactTracker(Registry registry) throws RemoteException, NotBoundException {
     TrackerInterface stub = (TrackerInterface) registry.lookup("Tracker");
     TrackerState trackerState = stub.register(player);
-    System.out.println("Tracker response: " + trackerState.toString());
     gameState = new GameState(trackerState);
-//    gameState.setPrimary(trackerState.getPrimary());
-//    gameState.setBackup(trackerState.getBackup());
-    System.out.println("TrackerState response: " + gameState.toString());
-
+    System.out.println("contactTracker initial GameState: " + gameState.toString());
   }
 
+  /**
+   * Get initial game state
+   * if current player is primary server, create game state
+   * otherwise, get latest game state from primary server
+   *
+   * @throws RemoteException
+   * @throws NotBoundException
+     */
   private void init() throws RemoteException, NotBoundException {
+    Player server = gameState.getPrimary();
 
-    Player primaryPlayer = gameState.getPrimary();
-
-    primaryPlayer = primaryPlayer != null ? primaryPlayer : gameState.getBackup();
-
-    if (primaryPlayer != null && !primaryPlayer.getPlayerId().equals(player.getPlayerId())){
-      serverRegistry = LocateRegistry.getRegistry(primaryPlayer.getIp(), primaryPlayer.getPortNumber());
-      GameInterface stub = (GameInterface) serverRegistry.lookup(primaryPlayer.getPlayerId());
-      updateGameState(stub.initPlayer(player));
-    }  else {
+    if (isPrimary()) {
       gameState.initGameState();
       gameState.addNewPlayer(player);
       updatePlayer();
+    } else if (server != null) {
+      serverRegistry = LocateRegistry.getRegistry(server.getIp(), server.getPortNumber());
+      GameInterface stub = (GameInterface) serverRegistry.lookup(server.getPlayerId());
+      gameState = stub.initPlayer(player);
+      updatePlayer();
+    } else {
+      System.err.println("Primary server is not found!");
     }
 
     System.out.println("game state after init: " + gameState.toString());
@@ -80,14 +94,17 @@ public class Game implements GameInterface {
   private void updateGameState(GameState gameState){
     this.gameState = gameState;
     updatePlayer();
-    refreshGameState();
+    refreshGameStateUI();
   }
 
-  private void refreshGameState(){
+  private void refreshGameStateUI(){
     System.out.println("game state after refreshing: " + gameState.toString());
     System.out.println("player after refreshing: " + player.toString());
   }
 
+  /**
+   * Update player position and score
+   */
   private void updatePlayer(){
     String playerId = player.getPlayerId();
     Position position = gameState.getPlayerPosition().get(playerId);
@@ -141,9 +158,7 @@ public class Game implements GameInterface {
             break;
 
         }
-      } catch (RemoteException e) {
-        e.printStackTrace();
-      } catch (NotBoundException e) {
+      } catch (RemoteException | NotBoundException e) {
         e.printStackTrace();
       }
     }
@@ -155,22 +170,23 @@ public class Game implements GameInterface {
       return;
     }
 
-    System.err.println("s1");
     String trackerIpAddress = args[0];
     int portNumber = Integer.parseInt(args[1]);
     String playerId = args[2];
+    System.out.println("Game start -----------------------\n");
+    System.out.print(String.format("Tracker IP: %s, port number: %d, playerId: %s", trackerIpAddress, portNumber, playerId));
     if (playerId == null || playerId.length() != 2) {
       System.err.println("Invalid player id");
       return;
     }
 
     try {
-      System.err.println("s2");
+      System.out.println("Game init -----------------------\n");
 
       Registry trackerRegistry = LocateRegistry.getRegistry(trackerIpAddress, portNumber);
 
       String playerIpAddress = InetAddress.getLocalHost().getHostAddress();
-      System.out.println("IP of my system is := "+ playerIpAddress);
+      System.out.println("Player IP: "+ playerIpAddress);
 
       Game game = new Game(playerId, playerIpAddress, portNumber);
 
@@ -207,7 +223,7 @@ public class Game implements GameInterface {
   @Override
   public GameState initPlayer(Player player) throws RemoteException, NotBoundException {
     gameState.addNewPlayer(player);
-    refreshGameState();
+    refreshGameStateUI();
     Player backupServer = gameState.getBackup();
     if (!player.getPlayerId().equals(backupServer.getPlayerId())){
       notifyBackup();
@@ -251,7 +267,7 @@ public class Game implements GameInterface {
         System.err.println("Unrecognized command");
     }
     if (updated){
-      refreshGameState();
+      refreshGameStateUI();
       notifyBackup();
     }
     return gameState;

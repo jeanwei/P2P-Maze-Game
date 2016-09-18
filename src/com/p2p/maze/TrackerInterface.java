@@ -4,25 +4,23 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 /**
- *
+ * Remote Interface for Tracker class
  *
  */
 public interface TrackerInterface extends Remote {
-//    public int getN() throws RemoteException;
-//
-//    public void setN(int n) throws RemoteException;
-//
-//    public int getK() throws RemoteException;
-//
-//    public void setK(int k) throws RemoteException;
-//
-//    public String getPortNumber() throws RemoteException;
-//
-//    public void setPortNumber(String portNumber) throws RemoteException;
-
+  /**
+   * Inform tracker a new player joins the game
+   * @param player new player
+   * @return current TrackerState (n, k, primary, backup)
+   * @throws RemoteException
+     */
   public TrackerState register(Player player) throws RemoteException;
 
-  public void setPrimaryServer(Player primaryServer) throws RemoteException;
-
-  public void setBackupServer(Player backupServer) throws RemoteException;
+  /**
+   * Inform tracker new servers in case a primary/backup server crashes
+   * @param primaryServer new primary server
+   * @param backupServer new backup server
+   * @throws RemoteException
+   */
+  public void updateServers(Player primaryServer, Player backupServer) throws RemoteException;
 }

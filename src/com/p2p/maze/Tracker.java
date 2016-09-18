@@ -20,21 +20,17 @@ public class Tracker implements TrackerInterface {
 
   public Tracker(int portNumber, int n, int k) {
     this.portNumber = portNumber;
-    this.trackerState.n = n;
-    this.trackerState.k = k;
+    this.trackerState.setN(n);
+    this.trackerState.setK(k);
   }
 
   public int getPortNumber() {
     return portNumber;
   }
 
-  public TrackerState getTrackerState() {
-    return trackerState;
-  }
-
   public TrackerState register(Player player) throws RemoteException {
 
-    System.err.println("register playerId:" + player);
+    System.err.println("register playerId start:" + player);
     System.err.println(trackerState.toString());
 
     Player primary = trackerState.getPrimary();
@@ -48,21 +44,16 @@ public class Tracker implements TrackerInterface {
       trackerState.setBackup(player);
     }
 
-    System.err.println("after register playerId:" + player);
+    System.err.println("register playerId end:" + player);
     System.err.println(trackerState.toString());
 
     return trackerState;
   }
 
   @Override
-  public void setPrimaryServer(Player primaryServer) throws RemoteException {
+  public void updateServers(Player primaryServer, Player backupServer) throws RemoteException {
     trackerState.setPrimary(primaryServer);
-  }
-
-  @Override
-  public void setBackupServer(Player backupServer) throws RemoteException {
     trackerState.setBackup(backupServer);
-
   }
 
   public static void main(String args[]) {
