@@ -238,7 +238,7 @@ public class Game implements GameInterface {
     int portNumber = Integer.parseInt(args[1]);
     String playerId = args[2];
     System.out.println("Game start -----------------------\n");
-    System.out.print(String.format("Tracker IP: %s, port number: %d, playerId: %s", trackerIpAddress, portNumber, playerId));
+    System.out.println(String.format("Tracker IP: %s, port number: %d, playerId: %s", trackerIpAddress, portNumber, playerId));
     if (playerId == null || playerId.length() != 2) {
       System.err.println("Invalid player id");
       return;
@@ -426,7 +426,7 @@ public class Game implements GameInterface {
 
     private void handleBackupServerDown() {
       // remove current backup from player list
-      gameState.removePlayer(gameState.getBackup().getPlayerId());
+      gameState.exitPlayer(gameState.getBackup());
       gameState.setBackup(null);
 
       // promote next player to backup
@@ -436,7 +436,7 @@ public class Game implements GameInterface {
 
     private void handlePrimaryServerDown() {
       // remove backup from player list
-      gameState.removePlayer(gameState.getBackup().getPlayerId());
+      gameState.exitPlayer(gameState.getBackup());
       gameState.setBackup(null);
 
       // promote self to primary

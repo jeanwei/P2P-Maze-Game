@@ -116,10 +116,6 @@ public class GameState extends TrackerState {
     return this.playerMap.get(playerId);
   }
 
-  public void removePlayer(String playerId) {
-    this.playerMap.remove(playerId);
-  }
-
   public Map<String, Player> getPlayers() {
     return this.playerMap;
   }
