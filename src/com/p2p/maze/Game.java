@@ -80,10 +80,10 @@ public class Game implements GameInterface {
   private void updateGameState(GameState gameState){
     this.gameState = gameState;
     updatePlayer();
-    refeshGameState();
+    refreshGameState();
   }
 
-  private void refeshGameState(){
+  private void refreshGameState(){
     System.out.println("game state after refreshing: " + gameState.toString());
     System.out.println("player after refreshing: " + player.toString());
   }
@@ -205,8 +205,13 @@ public class Game implements GameInterface {
   }
 
   @Override
-  public GameState initPlayer(Player player) throws RemoteException {
+  public GameState initPlayer(Player player) throws RemoteException, NotBoundException {
     gameState.addNewPlayer(player);
+    refreshGameState();
+    Player backupServer = gameState.getBackup();
+    if (!player.getPlayerId().equals(backupServer.getPlayerId())){
+      notifyBackup();
+    }
     return gameState;
   }
 
@@ -246,7 +251,7 @@ public class Game implements GameInterface {
         System.err.println("Unrecognized command");
     }
     if (updated){
-      refeshGameState();
+      refreshGameState();
       notifyBackup();
     }
     return gameState;
