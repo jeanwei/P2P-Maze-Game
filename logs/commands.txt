@@ -1,0 +1,1020 @@
+Current step is 1
+Creating player using command: java com.p2p.maze.Game localhost 1099 ab
+Current step is 2
+Creating player using command: java com.p2p.maze.Game localhost 1099 ac
+Current step is 3
+Creating player using command: java com.p2p.maze.Game localhost 1099 ad
+Current step is 4
+Creating player using command: java com.p2p.maze.Game localhost 1099 ae
+Current step is 5
+######### Checkpoint at step 5 #########
+Plan to move ae 4
+TA should press return to initiate the move...
+
+TA should now verify the move is done correctly
+TA should press return after verification
+
+Continuing the test...
+Plan to move ad 4
+TA should press return to initiate the move...
+
+TA should now verify the move is done correctly
+TA should press return after verification
+
+Continuing the test...
+Plan to move ac 0
+TA should press return to initiate the move...
+
+TA should now verify the move is done correctly
+TA should press return after verification
+
+Continuing the test...
+Plan to move ae 4
+TA should press return to initiate the move...
+
+TA should now verify the move is done correctly
+TA should press return after verification
+
+Continuing the test...
+Plan to move ac 3
+TA should press return to initiate the move...
+
+TA should now verify the move is done correctly
+TA should press return after verification
+
+Continuing the test...
+Fast move ae 3
+Fast move ae 0
+Fast move ae 3
+Fast move ae 0
+Fast move ac 3
+Current step is 6
+Fast move ac 0
+Fast move ac 2
+Fast move ab 2
+Fast move ab 2
+Fast move ae 0
+Current step is 7
+Fast move ab 1
+Fast move ae 4
+Fast move ab 4
+Fast move ad 2
+Fast move ac 0
+Current step is 8
+Fast move ac 3
+Fast move ab 0
+Fast move ad 2
+Fast move ad 3
+Fast move ac 1
+Current step is 9
+Fast move ae 4
+Fast move ab 1
+Fast move ac 2
+Fast move ab 4
+Fast move ab 1
+Current step is 10
+Fast move ae 2
+Fast move ae 0
+Fast move ae 0
+Fast move ae 4
+Fast move ab 0
+Current step is 11
+Fast move ad 0
+Fast move ad 0
+Fast move ad 3
+Fast move ac 4
+Fast move ad 2
+Current step is 12
+Fast move ae 2
+Fast move ad 1
+Fast move ae 1
+Fast move ae 4
+Fast move ac 1
+Current step is 13
+Fast move ae 2
+Fast move ae 4
+Fast move ad 0
+Fast move ad 3
+Fast move ad 2
+Current step is 14
+Fast move ae 2
+Fast move ae 1
+Fast move ad 4
+Fast move ab 0
+Fast move ad 1
+Current step is 15
+Fast move ab 1
+Fast move ad 4
+Fast move ae 3
+Fast move ab 1
+Fast move ac 1
+Current step is 16
+Fast move ac 4
+Fast move ac 3
+Fast move ad 3
+Fast move ac 4
+Fast move ad 4
+Current step is 17
+Fast move ac 4
+Fast move ae 3
+Fast move ac 2
+Fast move ab 3
+Fast move ad 4
+Current step is 18
+Fast move ac 1
+Fast move ad 2
+Fast move ad 0
+Fast move ac 1
+Fast move ab 3
+Current step is 19
+Fast move ac 4
+Fast move ae 4
+Fast move ac 3
+Fast move ad 0
+Fast move ad 3
+Current step is 20
+Fast move ac 3
+Fast move ac 0
+Fast move ab 1
+Fast move ab 4
+Fast move ab 4
+Current step is 21
+Fast move ad 3
+Fast move ad 2
+Fast move ae 0
+Fast move ae 2
+Fast move ac 2
+Current step is 22
+Fast move ab 2
+Fast move ae 4
+Fast move ae 1
+Fast move ad 3
+Fast move ac 2
+Current step is 23
+Fast move ac 1
+Fast move ac 3
+Fast move ad 1
+Fast move ab 1
+Fast move ae 1
+Current step is 24
+Fast move ac 2
+Fast move ae 1
+Fast move ad 0
+Fast move ae 0
+Fast move ad 4
+Current step is 25
+Fast move ae 4
+Fast move ab 2
+Fast move ac 0
+Fast move ab 2
+Fast move ae 1
+Current step is 26
+Fast move ad 4
+Fast move ae 1
+Fast move ac 4
+Fast move ae 1
+Fast move ab 3
+Current step is 27
+Fast move ae 0
+Fast move ab 1
+Fast move ac 4
+Fast move ad 4
+Fast move ab 3
+Current step is 28
+Fast move ab 3
+Fast move ab 1
+Fast move ab 0
+Fast move ad 0
+Fast move ac 0
+Current step is 29
+Fast move ab 3
+Fast move ab 0
+Fast move ac 2
+Fast move ad 2
+Fast move ab 4
+Current step is 30
+######### Checkpoint at step 30 #########
+Plan to move ad 2
+TA should press return to initiate the move...
+
+TA should now verify the move is done correctly
+TA should press return after verification
+
+Continuing the test...
+Plan to move ad 3
+TA should press return to initiate the move...
+
+TA should now verify the move is done correctly
+TA should press return after verification
+
+Continuing the test...
+Plan to move ae 0
+TA should press return to initiate the move...
+
+TA should now verify the move is done correctly
+TA should press return after verification
+
+Continuing the test...
+Plan to move ab 4
+TA should press return to initiate the move...
+
+TA should now verify the move is done correctly
+TA should press return after verification
+
+Continuing the test...
+Plan to move ac 1
+TA should press return to initiate the move...
+
+TA should now verify the move is done correctly
+TA should press return after verification
+
+Continuing the test...
+Fast move ab 2
+Fast move ae 1
+Fast move ab 1
+Fast move ab 2
+Fast move ad 1
+Current step is 31
+Killing player ad
+
+Current step is 32
+Fast move ab 4
+Fast move ac 2
+Fast move ab 0
+Fast move ae 0
+Fast move ac 0
+Current step is 33
+Killing player ab
+Current step is 34
+Current step is 35
+Current step is 36
+Current step is 37
+Current step is 38
+Fast move ae 1
+Fast move ae 4
+Fast move ae 2
+Fast move ac 2
+Fast move ac 2
+Current step is 39
+Creating player using command: java com.p2p.maze.Game localhost 1099 af
+Fast move ae 3
+Fast move ae 0
+Fast move ae 1
+Fast move af 4
+Fast move ae 1
+Current step is 40
+######### Checkpoint at step 40 #########
+Plan to move ac 3
+TA should press return to initiate the move...
+TA should now verify the move is done correctly
+TA should press return after verification
+
+Continuing the test...
+Plan to move ac 2
+TA should press return to initiate the move...
+
+TA should now verify the move is done correctly
+TA should press return after verification
+
+Continuing the test...
+Plan to move af 4
+TA should press return to initiate the move...
+
+TA should now verify the move is done correctly
+TA should press return after verification
+
+Continuing the test...
+Plan to move af 0
+TA should press return to initiate the move...
+
+TA should now verify the move is done correctly
+TA should press return after verification
+
+Continuing the test...
+Plan to move ae 3
+TA should press return to initiate the move...
+
+TA should now verify the move is done correctly
+TA should press return after verification
+
+Continuing the test...
+Fast move ac 2
+Fast move ac 1
+Fast move ac 4
+Fast move af 4
+Fast move af 3
+Current step is 41
+Fast move af 1
+Fast move af 2
+Fast move ac 4
+Fast move af 0
+Fast move ae 1
+Current step is 42
+Killing player af
+
+Current step is 43
+Current step is 44
+Creating player using command: java com.p2p.maze.Game localhost 1099 ag
+Fast move ac 3
+Fast move ae 1
+Fast move ac 2
+Fast move ae 0
+Fast move ac 1
+Current step is 45
+Creating player using command: java com.p2p.maze.Game localhost 1099 ah
+Fast move ag 0
+Fast move ag 0
+Fast move ae 4
+Fast move ah 1
+Fast move ag 1
+Current step is 46
+Fast move ag 1
+Fast move ag 2
+Fast move ac 2
+Fast move ac 0
+Fast move ag 4
+Current step is 47
+Fast move ag 1
+Fast move ae 2
+Fast move ah 0
+Fast move ae 3
+Fast move ah 2
+Current step is 48
+Creating player using command: java com.p2p.maze.Game localhost 1099 ai
+Fast move ag 4
+Fast move ai 1
+Fast move ah 4
+Fast move ag 0
+Fast move ah 1
+Current step is 49
+Killing player ag
+Current step is 50
+Killing player ah
+Current step is 51
+Creating player using command: java com.p2p.maze.Game localhost 1099 aj
+Fast move ai 0
+Fast move ac 2
+Fast move ae 4
+Fast move ai 2
+Fast move aj 4
+Current step is 52
+Killing player ae
+Current step is 53
+Killing player aj
+Current step is 54
+Creating player using command: java com.p2p.maze.Game localhost 1099 ak
+Fast move ac 4
+Fast move ac 3
+Fast move ai 4
+Fast move ai 4
+Fast move ak 2
+Current step is 55
+Killing player ai
+Current step is 56
+Fast move ac 2
+Fast move ac 1
+Fast move ak 1
+Fast move ac 4
+Fast move ak 2
+Current step is 57
+Current step is 58
+Current step is 59
+Current step is 60
+######### Checkpoint at step 60 #########
+Plan to move ak 0
+TA should press return to initiate the move...
+TA should now verify the move is done correctly
+TA should press return after verification
+
+Continuing the test...
+Plan to move ak 3
+TA should press return to initiate the move...
+
+TA should now verify the move is done correctly
+TA should press return after verification
+
+Continuing the test...
+Plan to move ak 1
+TA should press return to initiate the move...
+
+TA should now verify the move is done correctly
+TA should press return after verification
+
+Continuing the test...
+Plan to move ac 3
+TA should press return to initiate the move...
+
+TA should now verify the move is done correctly
+TA should press return after verification
+
+Continuing the test...
+Plan to move ak 1
+TA should press return to initiate the move...
+
+TA should now verify the move is done correctly
+TA should press return after verification
+
+Continuing the test...
+Creating player using command: java com.p2p.maze.Game localhost 1099 al
+Fast move ak 2
+Fast move al 2
+Fast move al 3
+Fast move ac 1
+Fast move ak 2
+Current step is 61
+Fast move ac 4
+Fast move ac 0
+Fast move al 2
+Fast move ac 0
+Fast move ac 2
+Current step is 62
+Creating player using command: java com.p2p.maze.Game localhost 1099 am
+Fast move ac 4
+Fast move ac 1
+Fast move ak 0
+Fast move am 1
+Fast move am 0
+Current step is 63
+Fast move al 1
+Fast move ak 4
+Fast move ac 3
+Fast move ac 1
+Fast move am 3
+Current step is 64
+Fast move am 4
+Fast move ak 2
+Fast move ak 1
+Fast move ac 3
+Fast move ak 1
+Current step is 65
+Killing player al
+Current step is 66
+Creating player using command: java com.p2p.maze.Game localhost 1099 an
+Fast move ac 4
+Fast move an 3
+Fast move ac 0
+Fast move an 2
+Fast move ac 4
+Current step is 67
+Killing player an
+Current step is 68
+Creating player using command: java com.p2p.maze.Game localhost 1099 ao
+Fast move ac 0
+Fast move ak 2
+Fast move ac 2
+Fast move ak 1
+Fast move am 0
+Current step is 69
+Creating player using command: java com.p2p.maze.Game localhost 1099 ap
+Fast move ao 0
+Fast move ak 4
+Fast move ac 2
+Fast move am 4
+Fast move ap 2
+Current step is 70
+Killing player am
+Current step is 71
+Creating player using command: java com.p2p.maze.Game localhost 1099 aq
+Fast move ak 0
+Fast move ak 3
+Fast move ak 2
+Fast move ao 2
+Fast move ak 1
+Current step is 72
+Current step is 73
+Current step is 74
+Current step is 75
+Current step is 76
+Killing player ak
+Current step is 77
+Killing player ap
+Current step is 78
+Killing player aq
+Current step is 79
+Creating player using command: java com.p2p.maze.Game localhost 1099 ar
+Fast move ao 4
+Fast move ao 1
+Fast move ar 1
+Fast move ac 1
+Fast move ac 4
+Current step is 80
+Killing player ac
+Current step is 81
+Fast move ao 4
+Fast move ao 3
+Fast move ar 4
+Fast move ar 2
+Fast move ao 2
+Current step is 82
+Current step is 83
+Current step is 84
+Fast move ar 0
+Fast move ar 1
+Fast move ar 0
+Fast move ar 1
+Fast move ao 4
+Current step is 85
+Current step is 86
+Fast move ao 1
+Fast move ao 1
+Fast move ao 0
+Fast move ar 2
+Fast move ao 0
+Current step is 87
+Creating player using command: java com.p2p.maze.Game localhost 1099 as
+Fast move ao 1
+Fast move ar 2
+Fast move ao 4
+Fast move as 0
+Fast move ao 0
+Current step is 88
+Fast move ao 4
+Fast move as 2
+Fast move ar 3
+Fast move ar 1
+Fast move ao 2
+Current step is 89
+Fast move ao 1
+Fast move as 2
+Fast move ar 3
+Fast move ar 0
+Fast move ar 3
+Current step is 90
+Creating player using command: java com.p2p.maze.Game localhost 1099 at
+Fast move ao 0
+Fast move ao 3
+Fast move ar 3
+Fast move at 3
+Fast move as 4
+Current step is 91
+Fast move ao 3
+Fast move as 3
+Fast move ar 4
+Fast move ar 3
+Fast move ao 4
+Current step is 92
+Fast move as 3
+Fast move ao 0
+Fast move ao 1
+Fast move ar 3
+Fast move as 2
+Current step is 93
+Fast move ao 0
+Fast move ao 1
+Fast move at 1
+Fast move ao 3
+Fast move ar 0
+Current step is 94
+Killing player at
+Current step is 95
+Creating player using command: java com.p2p.maze.Game localhost 1099 au
+Fast move ar 2
+Fast move ar 1
+Fast move au 4
+Fast move as 3
+Fast move ao 4
+Current step is 96
+Creating player using command: java com.p2p.maze.Game localhost 1099 av
+Fast move ao 0
+Fast move av 4
+Fast move ar 4
+Fast move ao 1
+Fast move ar 4
+Current step is 97
+Killing player ar
+Current step is 98
+Creating player using command: java com.p2p.maze.Game localhost 1099 aw
+Fast move as 0
+Fast move au 2
+Fast move ao 2
+Fast move aw 2
+Fast move av 4
+Current step is 99
+Current step is 100
+Current step is 101
+Killing player av
+Current step is 102
+Creating player using command: java com.p2p.maze.Game localhost 1099 ax
+Fast move aw 2
+Fast move as 3
+Fast move au 0
+Fast move au 1
+Fast move as 1
+Current step is 103
+Killing player ax
+Current step is 104
+Fast move au 1
+Fast move au 4
+Fast move as 2
+Fast move au 1
+Fast move au 3
+Current step is 105
+Creating player using command: java com.p2p.maze.Game localhost 1099 ay
+Fast move ao 2
+Fast move ay 3
+Fast move as 4
+Fast move aw 0
+Fast move ay 1
+Current step is 106
+Current step is 107
+Current step is 108
+Current step is 109
+Current step is 110
+Killing player aw
+Current step is 111
+Fast move ay 3
+Fast move au 4
+Fast move au 3
+Fast move ay 2
+Fast move as 1
+Current step is 112
+Creating player using command: java com.p2p.maze.Game localhost 1099 az
+Fast move as 4
+Fast move ay 2
+Fast move az 2
+Fast move az 1
+Fast move az 0
+Current step is 113
+Current step is 114
+Fast move ay 1
+Fast move au 3
+Fast move az 2
+Fast move ay 0
+Fast move ay 1
+Current step is 115
+Fast move au 0
+Fast move az 2
+Fast move ay 3
+Fast move au 3
+Fast move as 2
+Current step is 116
+Killing player az
+Current step is 117
+Creating player using command: java com.p2p.maze.Game localhost 1099 ba
+Fast move ao 0
+Fast move ay 3
+Fast move ba 3
+Fast move as 2
+Fast move ay 4
+Current step is 118
+Fast move ay 0
+Fast move ba 3
+Fast move ay 3
+Fast move ay 1
+Fast move ao 3
+Current step is 119
+Current step is 120
+Fast move au 0
+Fast move ao 3
+Fast move ao 2
+Fast move ay 1
+Fast move ao 2
+Current step is 121
+Current step is 122
+Killing player ao
+Current step is 123
+Creating player using command: java com.p2p.maze.Game localhost 1099 bb
+Fast move bb 4
+Fast move bb 2
+Fast move as 0
+Fast move ba 3
+Fast move au 1
+Current step is 124
+Fast move bb 0
+Fast move au 0
+Fast move ay 4
+Fast move bb 2
+Fast move ba 2
+Current step is 125
+Killing player au
+Current step is 126
+Killing player bb
+Current step is 127
+Fast move as 0
+Fast move as 4
+Fast move as 0
+Fast move as 2
+Fast move ba 0
+Current step is 128
+Killing player as
+Current step is 129
+Fast move ay 1
+Fast move ba 2
+Fast move ay 3
+Fast move ba 2
+Fast move ay 0
+Current step is 130
+Current step is 131
+Current step is 132
+Current step is 133
+Fast move ay 2
+Fast move ay 4
+Fast move ay 0
+Fast move ay 4
+Fast move ay 2
+Current step is 134
+Fast move ay 2
+Fast move ba 2
+Fast move ba 2
+Fast move ay 0
+Fast move ay 0
+Current step is 135
+Fast move ay 0
+Fast move ay 4
+Fast move ay 2
+Fast move ba 3
+Fast move ay 2
+Current step is 136
+Current step is 137
+Fast move ay 4
+Fast move ay 3
+Fast move ay 2
+Fast move ay 4
+Fast move ba 0
+Current step is 138
+Fast move ba 3
+Fast move ay 2
+Fast move ba 0
+Fast move ba 4
+Fast move ay 0
+Current step is 139
+Current step is 140
+Fast move ba 0
+Fast move ba 2
+Fast move ba 4
+Fast move ba 4
+Fast move ba 0
+Current step is 141
+Current step is 142
+Fast move ba 0
+Fast move ba 4
+Fast move ay 2
+Fast move ba 3
+Fast move ba 1
+Current step is 143
+Fast move ay 1
+Fast move ba 1
+Fast move ay 0
+Fast move ba 1
+Fast move ba 2
+Current step is 144
+Current step is 145
+Current step is 146
+Creating player using command: java com.p2p.maze.Game localhost 1099 bc
+Fast move bc 3
+Fast move bc 3
+Fast move bc 0
+Fast move bc 2
+Fast move ay 2
+Current step is 147
+Creating player using command: java com.p2p.maze.Game localhost 1099 bd
+Fast move ay 4
+Fast move bd 2
+Fast move ba 3
+Fast move ba 4
+Fast move ba 2
+Current step is 148
+Creating player using command: java com.p2p.maze.Game localhost 1099 be
+Fast move be 3
+Fast move ba 0
+Fast move ay 3
+Fast move ay 3
+Fast move bc 0
+Current step is 149
+Killing player bc
+Current step is 150
+Killing player bd
+Current step is 151
+Killing player ba
+Current step is 152
+Current step is 153
+Fast move be 1
+Fast move be 2
+Fast move be 4
+Fast move ay 4
+Fast move be 1
+Current step is 154
+Current step is 155
+Current step is 156
+Creating player using command: java com.p2p.maze.Game localhost 1099 bf
+Fast move bf 1
+Fast move bf 4
+Fast move ay 2
+Fast move bf 2
+Fast move bf 4
+Current step is 157
+Fast move be 1
+Fast move ay 2
+Fast move be 1
+Fast move be 1
+Fast move ay 4
+Current step is 158
+Killing player be
+Current step is 159
+Current step is 160
+Fast move bf 1
+Fast move ay 0
+Fast move ay 0
+Fast move bf 2
+Fast move bf 1
+Current step is 161
+Current step is 162
+Creating player using command: java com.p2p.maze.Game localhost 1099 bg
+Fast move bf 3
+Fast move ay 4
+Fast move bg 3
+Fast move ay 4
+Fast move ay 2
+Current step is 163
+Fast move bg 4
+Fast move ay 1
+Fast move bg 2
+Fast move ay 3
+Fast move ay 0
+Current step is 164
+Fast move ay 4
+Fast move bg 3
+Fast move bg 4
+Fast move bf 4
+Fast move bg 2
+Current step is 165
+Killing player ay
+Current step is 166
+Current step is 167
+Fast move bg 3
+Fast move bg 1
+Fast move bf 4
+Fast move bg 3
+Fast move bf 4
+Current step is 168
+Current step is 169
+Fast move bg 0
+Fast move bf 0
+Fast move bg 1
+Fast move bg 0
+Fast move bg 3
+Current step is 170
+Creating player using command: java com.p2p.maze.Game localhost 1099 bh
+Fast move bf 1
+Fast move bf 3
+Fast move bh 0
+Fast move bh 4
+Fast move bh 0
+Current step is 171
+Killing player bf
+Current step is 172
+Creating player using command: java com.p2p.maze.Game localhost 1099 bi
+Fast move bi 1
+Fast move bg 4
+Fast move bh 3
+Fast move bg 4
+Fast move bi 0
+Current step is 173
+Creating player using command: java com.p2p.maze.Game localhost 1099 bj
+Fast move bg 3
+Fast move bh 2
+Fast move bj 4
+Fast move bg 2
+Fast move bh 2
+Current step is 174
+Killing player bj
+Current step is 175
+Fast move bh 1
+Fast move bh 2
+Fast move bi 2
+Fast move bg 3
+Fast move bg 3
+Current step is 176
+Killing player bg
+Current step is 177
+Current step is 178
+Current step is 179
+Current step is 180
+Creating player using command: java com.p2p.maze.Game localhost 1099 bk
+Fast move bh 0
+Fast move bh 1
+Fast move bk 3
+Fast move bh 2
+Fast move bh 2
+Current step is 181
+Creating player using command: java com.p2p.maze.Game localhost 1099 bl
+Fast move bl 3
+Fast move bk 2
+Fast move bi 4
+Fast move bk 0
+Fast move bh 0
+Current step is 182
+Killing player bl
+Current step is 183
+Creating player using command: java com.p2p.maze.Game localhost 1099 bm
+Fast move bh 0
+Fast move bm 3
+Fast move bh 1
+Fast move bi 4
+Fast move bm 4
+Current step is 184
+Creating player using command: java com.p2p.maze.Game localhost 1099 bn
+Fast move bn 0
+Fast move bm 4
+Fast move bh 4
+Fast move bh 3
+Fast move bk 4
+Current step is 185
+Killing player bm
+Current step is 186
+Killing player bi
+Current step is 187
+Killing player bn
+Current step is 188
+Current step is 189
+Fast move bk 1
+Fast move bh 4
+Fast move bk 4
+Fast move bk 3
+Fast move bh 0
+Current step is 190
+Current step is 191
+Creating player using command: java com.p2p.maze.Game localhost 1099 bo
+Fast move bo 4
+Fast move bo 2
+Fast move bh 1
+Fast move bo 2
+Fast move bh 0
+Current step is 192
+Creating player using command: java com.p2p.maze.Game localhost 1099 bp
+Fast move bk 0
+Fast move bh 0
+Fast move bo 2
+Fast move bk 2
+Fast move bp 2
+Current step is 193
+Creating player using command: java com.p2p.maze.Game localhost 1099 bq
+Fast move bp 4
+Fast move bh 0
+Fast move bq 0
+Fast move bo 4
+Fast move bo 0
+Current step is 194
+Fast move bk 1
+Fast move bo 2
+Fast move bo 2
+Fast move bh 4
+Fast move bp 1
+Current step is 195
+Current step is 196
+Fast move bp 2
+Fast move bh 0
+Fast move bk 3
+Fast move bq 1
+Fast move bq 1
+Current step is 197
+Current step is 198
+Current step is 199
+Fast move bk 1
+Fast move bp 4
+Fast move bq 3
+Fast move bp 2
+Fast move bq 2
+Current step is 200
+######### Checkpoint at step 200 #########
+Plan to move bk 3
+TA should press return to initiate the move...
+
+TA should now verify the move is done correctly
+TA should press return after verification
+
+Continuing the test...
+Plan to move bq 4
+TA should press return to initiate the move...
+
+TA should now verify the move is done correctly
+TA should press return after verification
+
+Continuing the test...
+Plan to move bq 2
+TA should press return to initiate the move...
+
+TA should now verify the move is done correctly
+TA should press return after verification
+
+Continuing the test...
+Plan to move bk 0
+TA should press return to initiate the move...
+
+TA should now verify the move is done correctly
+TA should press return after verification
+
+Continuing the test...
+Plan to move bk 2
+TA should press return to initiate the move...
+
+TA should now verify the move is done correctly
+TA should press return after verification
+
+Continuing the test...
+Fast move bo 0
+Fast move bk 3
+Fast move bq 0
+Fast move bk 0
+Fast move bo 0
+Stress test ends after all steps.
