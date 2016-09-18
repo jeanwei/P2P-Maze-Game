@@ -23,4 +23,6 @@ public interface TrackerInterface extends Remote {
    * @throws RemoteException
    */
   public void updateServers(Player primaryServer, Player backupServer) throws RemoteException;
+
+  public TrackerState getTrackerState() throws RemoteException;
 }

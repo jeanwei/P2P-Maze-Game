@@ -91,17 +91,28 @@ public class Game implements GameInterface {
       gameState.addNewPlayer(player);
       updatePlayer();
     } else if (server != null) {
+      System.err.println("initial connection to server: " + server.getPlayerId());
       serverRegistry = LocateRegistry.getRegistry(server.getIp(), server.getPortNumber());
-      serverGameInterface = (GameInterface) serverRegistry.lookup(server.getPlayerId());      
-      while(true) // only stop when successfully add new player inside the map
+      serverGameInterface = (GameInterface) serverRegistry.lookup(server.getPlayerId());
+
+      while(true)
       {
-        gameState = serverGameInterface.initPlayer(player);
-        // found its own player id inside the map, then add player success, then loop
-        if(gameState.getPlayer(player.getPlayerId()) != null){
-          break;
+        try{
+          if (connectToAddPlayer(server)){
+            break;
+          }
+        } catch (Exception e){
+          System.out.println("initial connection error");
+          TrackerInterface stub = (TrackerInterface) trackerRegistry.lookup("Tracker");
+          TrackerState trackerState = stub.register(player);
+          gameState = new GameState(trackerState);
+          System.out.println("contactTracker reconnected GameState: " + gameState.toString());
+          server = gameState.getPrimary();
         }
-        Thread.sleep(400); // sleep for 400ms and try again
+        System.err.println("retry to connect to server: " + server.getPlayerId());
+        Thread.sleep(2000); // sleep for 2000ms and try again
       }
+
       updatePlayer();
     } else {
       System.err.println("Primary server is not found!");
@@ -109,6 +120,20 @@ public class Game implements GameInterface {
 
     System.out.println("game state after init: " + gameState.toString());
     System.out.println("player after init: " + player.toString());
+  }
+
+  private boolean connectToAddPlayer(Player server) throws RemoteException, NotBoundException, InterruptedException {
+    while(true) // only stop when successfully add new player inside the map
+    {
+      gameState = serverGameInterface.initPlayer(player);
+      // found its own player id inside the map, then add player success, then loop
+      if(gameState.getPlayer(player.getPlayerId()) != null){
+        break;
+      }
+      System.err.println("retry to connect to server: " + server.getPlayerId());
+      Thread.sleep(400); // sleep for 400ms and try again
+    }
+    return true;
   }
 
   private void updateGameState(GameState gameState){
@@ -151,14 +176,17 @@ public class Game implements GameInterface {
         try{
           play(commandChar);
         } catch (RemoteException | NotBoundException e) {
-          e.printStackTrace();
+          System.out.println("server play error");
+//          e.printStackTrace();
         }
       } else {
         boolean primaryNotFound = false;
         try {
           connectToServerAndPlay(commandChar);
+          System.out.println("connecting to: "+gameState.getPrimary().getPlayerId());
         } catch (RemoteException | NotBoundException e) {
-          e.printStackTrace();
+//          e.printStackTrace();
+          System.out.println("primary connectToServerAndPlay error");
           primaryNotFound = true;
         }
 
@@ -167,10 +195,11 @@ public class Game implements GameInterface {
             Player backupServer = gameState.getBackup();
             serverRegistry = LocateRegistry.getRegistry(backupServer.getIp(), backupServer.getPortNumber());
             serverGameInterface = (GameInterface) serverRegistry.lookup(backupServer.getPlayerId());
-
+            System.out.println("connecting to: "+backupServer.getPlayerId());
             connectToServerAndPlay(commandChar);
           } catch (RemoteException | NotBoundException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
+            System.out.println("backup connectToServerAndPlay error");
           }
         }
       }
@@ -272,7 +301,7 @@ public class Game implements GameInterface {
 
     } catch (Exception e) {
       System.err.println("Client exception: " + e.toString());
-      e.printStackTrace();
+//      e.printStackTrace();
     }
   }
 
@@ -343,9 +372,16 @@ public class Game implements GameInterface {
     }
     Player backupServer = gameState.getBackup();
     if (backupServer != null && !backupServer.getPlayerId().equals(player.getPlayerId())) {
-      Registry backupRegistry = LocateRegistry.getRegistry(backupServer.getIp(), backupServer.getPortNumber());
-      GameInterface stub = (GameInterface) backupRegistry.lookup(backupServer.getPlayerId());
-      stub.syncGameState(gameState);
+      System.err.println("Notify backup: "+ backupServer.getPlayerId());
+      try{
+        Registry backupRegistry = LocateRegistry.getRegistry(backupServer.getIp(), backupServer.getPortNumber());
+        GameInterface stub = (GameInterface) backupRegistry.lookup(backupServer.getPlayerId());
+        stub.syncGameState(gameState);
+      } catch (Exception e){
+//        e.printStackTrace();
+        System.out.println("notifyBackup error");
+      }
+
     }
   }
 
@@ -358,7 +394,7 @@ public class Game implements GameInterface {
 
     } catch (RemoteException | NotBoundException e) {
       System.err.println("Update tracker failed!");
-      e.printStackTrace();
+//      e.printStackTrace();
     }
   }
 
@@ -398,10 +434,11 @@ public class Game implements GameInterface {
           Registry backupRegistry = LocateRegistry.getRegistry(backup.getIp(), backup.getPortNumber());
           GameInterface iBackup = (GameInterface) backupRegistry.lookup(backup.getPlayerId());
           iBackup.ping();
+          System.err.println("Ping primary->backup : " + backup.getPlayerId());
 
         } catch (RemoteException | NotBoundException e) {
           System.err.println("Ping primary->backup failed!");
-          e.printStackTrace();
+//          e.printStackTrace();
           handleBackupServerDown();
         }
       } else if (isBackup()) {
@@ -418,7 +455,7 @@ public class Game implements GameInterface {
 
         } catch (RemoteException | NotBoundException e) {
           System.err.println("Ping backup->primary failed");
-          e.printStackTrace();
+//          e.printStackTrace();
           handlePrimaryServerDown();
         }
       }
@@ -436,7 +473,7 @@ public class Game implements GameInterface {
 
     private void handlePrimaryServerDown() {
       // remove backup from player list
-      gameState.exitPlayer(gameState.getBackup());
+      gameState.exitPlayer(gameState.getPrimary());
       gameState.setBackup(null);
 
       // promote self to primary
@@ -462,7 +499,8 @@ public class Game implements GameInterface {
           break;
 
         } catch (RemoteException | NotBoundException e) {
-          e.printStackTrace();
+//          e.printStackTrace();
+          System.err.println("promote error");
         }
       }
 
