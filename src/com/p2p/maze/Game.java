@@ -226,8 +226,13 @@ public class Game implements GameInterface {
   }
 
   @Override
-  public GameState initPlayer(Player player) throws RemoteException {
+  public GameState initPlayer(Player player) throws RemoteException, NotBoundException {
     gameState.addNewPlayer(player);
+    refreshGameStateUI();
+    Player backupServer = gameState.getBackup();
+    if (!player.getPlayerId().equals(backupServer.getPlayerId())){
+      notifyBackup();
+    }
     return gameState;
   }
 

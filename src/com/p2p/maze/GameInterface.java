@@ -21,7 +21,7 @@ public interface GameInterface extends Remote {
    * @param player backup server to be
    * @return game state copied to backup server
    */
-  public GameState initPlayer(Player player) throws RemoteException;
+  public GameState initPlayer(Player player) throws RemoteException, NotBoundException;
 
   /**
    * [Primary] Player move in the maze
