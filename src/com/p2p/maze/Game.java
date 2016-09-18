@@ -79,7 +79,7 @@ public class Game implements GameInterface {
    * @throws RemoteException
    * @throws NotBoundException
      */
-  private void init() throws RemoteException, NotBoundException {
+  private void init() throws RemoteException, NotBoundException, InterruptedException {
     Player server = gameState.getPrimary();
 
     if (isPrimary()) {
@@ -89,7 +89,15 @@ public class Game implements GameInterface {
     } else if (server != null) {
       serverRegistry = LocateRegistry.getRegistry(server.getIp(), server.getPortNumber());
       GameInterface stub = (GameInterface) serverRegistry.lookup(server.getPlayerId());
-      gameState = stub.initPlayer(player);
+      while(true) // only stop when successfully add new player inside the map
+      {
+        gameState = stub.initPlayer(player);
+        // found its own player id inside the map, then add player success, then loop
+        if(gameState.getPlayer(player.getPlayerId()) != null){
+          break;
+        }
+        Thread.sleep(400); // sleep for 400ms and try again
+      }
       updatePlayer();
     } else {
       System.err.println("Primary server is not found!");
