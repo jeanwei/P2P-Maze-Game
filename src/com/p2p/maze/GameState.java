@@ -14,9 +14,7 @@ public class GameState extends TrackerState {
   private String[][] maze;
 
   // storing list of player
-  private Map<String, Integer> scoreList;
-  private Map<String, Position> playerPosition;
-  private Map<String, Position> treasurePosition;
+  private Map<String, Player> playerMap;
 
   public GameState(TrackerState trackerState){
     this.n = trackerState.getN();
@@ -27,9 +25,7 @@ public class GameState extends TrackerState {
 
   public void initGameState(){
     this.maze = new String[n][n];
-    this.scoreList = new HashMap<>();
-    this.playerPosition = new HashMap<>();
-    this.treasurePosition = new HashMap<>();
+    this.playerMap = new HashMap<String, Player>();
     Random random = new Random();
     for(int i = 0; i < k; i++){
       if(!this.addTreasure(random.nextInt(n), random.nextInt(n))){
@@ -40,6 +36,7 @@ public class GameState extends TrackerState {
 
   public synchronized void addNewPlayer(Player newPlayer) {
     Random random = new Random();
+    this.playerMap.put(newPlayer.getPlayerId(), newPlayer);
     while(!this.add(random.nextInt(n), random.nextInt(n), newPlayer)){
 
     }
@@ -50,18 +47,17 @@ public class GameState extends TrackerState {
       return false;
     } else {
       maze[newPositionX][newPositionY] = TREASURE_VALUE;
-      treasurePosition.put(newPositionX + "X" + newPositionY, new Position(newPositionX, newPositionY));
     }
     return true;
   }
 
   public synchronized boolean move(Player player,  int horizontal, int vertical) {
     String playerID = player.getPlayerId();
-    Position curPosition = this.playerPosition.get(playerID);
-    int newPositionX = curPosition.posX + horizontal;
-    int newPositionY = curPosition.posY + vertical;
-    int oldPositionX = curPosition.posX;
-    int oldPositionY = curPosition.posY;
+    player = this.playerMap.get(playerID);
+    int oldPositionX = player.getPosition().posX;
+    int oldPositionY = player.getPosition().posY;
+    int newPositionX = player.getPosition().posX + horizontal;
+    int newPositionY = player.getPosition().posY + vertical;
     if(newPositionX < 0 || newPositionX > n-1
         || newPositionY < 0 || newPositionY > n-1)
       return false;
@@ -72,37 +68,29 @@ public class GameState extends TrackerState {
     return false;
   }
 
-  private synchronized void collectTreasureAndUpdateScore(String playerId, int positionX, int positionY) {
-    Integer score = scoreList.get(playerId);
-    score = score == null ? 1 : score++;
-    scoreList.put(playerId, score);
+  private synchronized void collectTreasureAndUpdateScore(Player player, int positionX, int positionY) {
+    Integer score = player.getScore();
+    player.setScore(score++);
     Random random = new Random();
     while(!this.addTreasure(random.nextInt(n), random.nextInt(n))){
 
     }
-    treasurePosition.remove(positionX + "X" + positionY);
-    remove(positionX, positionY);
+    this.remove(positionX, positionY);
   }
 
   private synchronized boolean add(int newPositionX, int newPositionY, Player player) {
     String playerID =  player.getPlayerId();
     if(maze[newPositionX][newPositionY] != null){
       if (TREASURE_VALUE.equals(maze[newPositionX][newPositionY])){
-        collectTreasureAndUpdateScore(playerID, newPositionX, newPositionY);
+        collectTreasureAndUpdateScore(player, newPositionX, newPositionY);
       } else {
         return false;
       }
     }
 
     maze[newPositionX][newPositionY] = playerID;
-    if(playerPosition.containsKey( playerID))
-    {
-      Position position = playerPosition.get( playerID);
-      position.posX = newPositionX;
-      position.posY = newPositionY;
-    }
-    else
-      playerPosition.put(playerID, new Position(newPositionX, newPositionY));
+    playerMap.get(playerID).getPosition().posX = newPositionX;
+    playerMap.get(playerID).getPosition().posY = newPositionY;
     return true;
   }
 
@@ -112,18 +100,14 @@ public class GameState extends TrackerState {
 
   public synchronized boolean exitPlayer(Player player){
     String playerId = player.getPlayerId();
-    Position pos = this.playerPosition.get(playerId);
-    this.remove(pos.posX, pos.posY);
-    this.playerPosition.remove(playerId);
+    player = this.playerMap.get(playerId);
+    this.remove(player.getPosition().posX, player.getPosition().posY);
+    this.playerMap.remove(playerId);
     return true;
   }
 
-  public Map<String, Integer> getScoreList() {
-    return scoreList;
-  }
-
-  public Map<String, Position> getPlayerPosition() {
-    return playerPosition;
+  public Player getPlayer(String playerId) {
+    return this.playerMap.get(playerId);
   }
 
   @Override
@@ -134,8 +118,7 @@ public class GameState extends TrackerState {
         ", k=" + k +
         ", primary='" + primary + '\'' +
         ", backup='" + backup + '\'' +
-        ", playerPosition='" + Arrays.asList(playerPosition) + '\'' +
-        ", treasurePosition='" + Arrays.asList(treasurePosition) + '\'' +
+        ", playerPosition='" + Arrays.asList(playerMap) + '\'' +
         '}');
 
     String newLineStr = System.getProperty("line.separator");

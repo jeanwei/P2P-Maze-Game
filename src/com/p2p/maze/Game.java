@@ -112,15 +112,7 @@ public class Game implements GameInterface {
    */
   private void updatePlayer(){
     String playerId = player.getPlayerId();
-    Position position = gameState.getPlayerPosition().get(playerId);
-    if (position != null){
-      player.setPosition(position);
-    }
-
-    Integer score = gameState.getScoreList().get(playerId);
-    if (score != null){
-      player.setScore(score);
-    }
+    this.player = gameState.getPlayer(playerId);
   }
 
   private void run() {
