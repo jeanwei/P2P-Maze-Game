@@ -77,7 +77,8 @@ public class GameState extends TrackerState {
 
   private synchronized void collectTreasureAndUpdateScore(Player player, int positionX, int positionY) {
     Integer score = player.getScore();
-    player.setScore(score++);
+    score++;
+    player.setScore(score);
     // only if player size and K smaller than size of map
     if((this.playerMap.keySet().size() + this.k) <= this.n * this.n)
     {
@@ -114,6 +115,10 @@ public class GameState extends TrackerState {
     player = this.playerMap.get(playerId);
     this.remove(player.getPosition().posX, player.getPosition().posY);
     this.playerMap.remove(playerId);
+    Player backupServer = getBackup();
+    if (backupServer != null && backupServer.getPlayerId().equals(playerId)){
+      setBackup(null);
+    }
     return true;
   }
 
