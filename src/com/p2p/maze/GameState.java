@@ -36,6 +36,8 @@ public class GameState extends TrackerState {
 
   public synchronized void addNewPlayer(Player newPlayer) {
     Random random = new Random();
+    if(this.playerMap.keySet().size() >= this.n * this.n)
+      return;
     this.playerMap.put(newPlayer.getPlayerId(), newPlayer);
     while(!this.add(random.nextInt(n), random.nextInt(n), newPlayer)){
 
@@ -71,9 +73,13 @@ public class GameState extends TrackerState {
   private synchronized void collectTreasureAndUpdateScore(Player player, int positionX, int positionY) {
     Integer score = player.getScore();
     player.setScore(score++);
-    Random random = new Random();
-    while(!this.addTreasure(random.nextInt(n), random.nextInt(n))){
+    // only if player size and K smaller than size of map
+    if((this.playerMap.keySet().size() + this.k) <= this.n * this.n)
+    {
+      Random random = new Random();
+      while(!this.addTreasure(random.nextInt(n), random.nextInt(n))){
 
+      }
     }
     this.remove(positionX, positionY);
   }
