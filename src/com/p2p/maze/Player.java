@@ -3,7 +3,7 @@ package com.p2p.maze;
 import java.io.Serializable;
 
 /**
- *
+ * Player object
  */
 public class Player implements Serializable {
   private String playerId = null;

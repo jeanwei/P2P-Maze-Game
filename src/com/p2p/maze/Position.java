@@ -3,14 +3,14 @@ package com.p2p.maze;
 import java.io.Serializable;
 
 /**
- * Created by CheunPin on 17/9/2016.
+ * Player position in the Maze
+ *
  */
-public class Position implements Serializable{
+public class Position implements Serializable {
   public int posX;
   public int posY;
 
-  public Position(int newPosX, int newPosY)
-  {
+  public Position(int newPosX, int newPosY) {
     this.posX = newPosX;
     this.posY = newPosY;
   }
