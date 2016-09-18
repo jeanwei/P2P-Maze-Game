@@ -106,7 +106,7 @@ public class Game implements GameInterface {
         } catch (Exception e){
           System.out.println("initial connection error");
           TrackerInterface stub = (TrackerInterface) trackerRegistry.lookup("Tracker");
-          TrackerState trackerState = stub.register(player);
+          TrackerState trackerState = stub.getTrackerState();
           gameState = new GameState(trackerState);
           System.out.println("contactTracker reconnected GameState: " + gameState.toString());
           server = gameState.getPrimary();
@@ -433,7 +433,7 @@ public class Game implements GameInterface {
     if (isPrimary() || isBackup()) {
       System.out.println("startKeepAlive");
       Timer timer = new Timer();
-      timer.schedule(new KeepAliveTask(), 0, 2000);
+      timer.schedule(new KeepAliveTask(), 0, 1000);
     }
   }
 
@@ -511,6 +511,7 @@ public class Game implements GameInterface {
           continue;
         }
         System.err.println("promoting: " + id + " as new backup");
+        System.err.println("current player size: " + gameState.getPlayers().keySet().size());
 
         Player next = gameState.getPlayers().get(id);
         try {
@@ -518,6 +519,7 @@ public class Game implements GameInterface {
           GameInterface stub = (GameInterface) registry.lookup(next.getPlayerId());
           stub.promoteToBackupServer(gameState);
           gameState.setBackup(next); // set only after promoteToBackupServer is successful
+          System.err.println("promoted: " + id + " as new backup");
           break;
 
         } catch (RemoteException | NotBoundException e) {
