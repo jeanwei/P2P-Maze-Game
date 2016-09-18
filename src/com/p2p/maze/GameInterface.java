@@ -1,5 +1,6 @@
 package com.p2p.maze;
 
+import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
@@ -35,14 +36,14 @@ public interface GameInterface extends Remote {
    * @param move movement direction (1: west, 2: south, 3: east, 4: north)
    * @return Game state
    */
-  public GameState move(Player player, Game.Command move) throws RemoteException;
+  public GameState executeCommand(Player player, Game.Command move) throws RemoteException, NotBoundException;
 
   /**
    * [Primary] Player exit the game
    *
    * @param player (user input: 9)
    */
-  public void exit(Player player) throws RemoteException;
+  public boolean exit(Player player) throws RemoteException;
 
   /**
    * [Primary <-> Backup] Ping each other every 2sec to check alive
@@ -56,7 +57,7 @@ public interface GameInterface extends Remote {
    *
    * @return true if sync succeeds
    */
-  public boolean syncGameState() throws RemoteException;
+  public boolean syncGameState(GameState gameState) throws RemoteException;
 
   /**
    * [Primary -> Backup] Promote new backup server when old one exit

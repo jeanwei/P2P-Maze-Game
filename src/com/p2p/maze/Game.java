@@ -94,9 +94,12 @@ public class Game implements GameInterface {
   private void updateGameState(GameState gameState){
     this.gameState = gameState;
     updatePlayer();
+    refreshGameStateUI();
+  }
 
-    System.out.println("updateGameState: " + gameState.toString());
-    System.out.println("updateGameState current player: " + player.toString());
+  private void refreshGameStateUI(){
+    System.out.println("game state after refreshing: " + gameState.toString());
+    System.out.println("player after refreshing: " + player.toString());
   }
 
   /**
@@ -125,11 +128,6 @@ public class Game implements GameInterface {
         continue;
       }
 
-      if ("q".equals(input)) {
-        System.out.println("Exit!");
-        System.exit(0);
-      }
-
       System.out.println("input : " + input);
       System.out.println("-----------\n");
       Player primaryPlayer = gameState.getPrimary();
@@ -139,22 +137,24 @@ public class Game implements GameInterface {
         switch (input.charAt(0)){
 
           case '0':
-            updateGameState(stub.getGameState());
+            updateGameState(stub.executeCommand(player, Command.GAME_STATE));
             break;
           case '1':
-            updateGameState(stub.move(player, Command.MOVE_WEST));
+            updateGameState(stub.executeCommand(player, Command.MOVE_WEST));
             break;
           case '2':
-            updateGameState(stub.move(player, Command.MOVE_SOUTH));
+            updateGameState(stub.executeCommand(player, Command.MOVE_SOUTH));
             break;
           case '3':
-            updateGameState(stub.move(player, Command.MOVE_EAST));
+            updateGameState(stub.executeCommand(player, Command.MOVE_EAST));
             break;
           case '4':
-            updateGameState(stub.move(player, Command.MOVE_NORTH));
+            updateGameState(stub.executeCommand(player, Command.MOVE_NORTH));
             break;
           case '9':
-            stub.exit(player);
+            stub.executeCommand(player, Command.EXIT);
+            System.out.println("Exit!");
+            System.exit(0);
             break;
 
         }
@@ -232,33 +232,55 @@ public class Game implements GameInterface {
   }
 
   @Override
-  public GameState move(Player player, Command move) throws RemoteException {
+  public GameState executeCommand(Player player, Command move) throws RemoteException, NotBoundException {
+    boolean updated = false;
     switch (move) {
+      case GAME_STATE:
+        break;
+
       case MOVE_WEST:
-        gameState.move(player, 0, -1);
+        updated = gameState.move(player, 0, -1);
         break;
 
       case MOVE_SOUTH:
-        gameState.move(player, 1, 0);
+        updated = gameState.move(player, 1, 0);
         break;
 
       case MOVE_EAST:
-        gameState.move(player, 0, 1);
+        updated = gameState.move(player, 0, 1);
         break;
 
       case MOVE_NORTH:
-        gameState.move(player, -1, 0);
+        updated =  gameState.move(player, -1, 0);
+        break;
+
+      case EXIT:
+        updated =  gameState.exitPlayer(player);
         break;
 
       default:
-        System.err.println("Unrecognized move command");
+        System.err.println("Unrecognized command");
+    }
+    if (updated){
+      refreshGameStateUI();
+      notifyBackup();
     }
     return gameState;
   }
 
-  @Override
-  public void exit(Player player) throws RemoteException {
+  private void notifyBackup() throws RemoteException, NotBoundException {
+    Player backupServer = gameState.getBackup();
+    if (backupServer != null && !backupServer.getPlayerId().equals(player.getPlayerId())){
+      Registry backupRegistry = LocateRegistry.getRegistry(backupServer.getIp(), backupServer.getPortNumber());
+      GameInterface stub = (GameInterface) backupRegistry.lookup(backupServer.getPlayerId());
+      stub.syncGameState(gameState);
+    }
+  }
 
+  @Override
+  public boolean exit(Player player) throws RemoteException {
+    gameState.exitPlayer(player);
+    return true;
   }
 
   @Override
@@ -267,7 +289,8 @@ public class Game implements GameInterface {
   }
 
   @Override
-  public boolean syncGameState() throws RemoteException {
+  public boolean syncGameState(GameState gameState) throws RemoteException {
+    updateGameState(gameState);
     return false;
   }
 
