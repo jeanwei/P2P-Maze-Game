@@ -55,6 +55,9 @@ public class Tracker implements TrackerInterface {
   public synchronized void updateServers(Player primaryServer, Player backupServer) throws RemoteException {
     trackerState.setPrimary(primaryServer);
     trackerState.setBackup(backupServer);
+    System.err.println();
+    System.err.println("updated track states:");
+    System.err.println(trackerState.toString());
   }
 
   @Override
