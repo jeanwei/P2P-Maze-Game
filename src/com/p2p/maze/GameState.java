@@ -36,6 +36,10 @@ public class GameState extends TrackerState {
 
   public synchronized void addNewPlayer(Player newPlayer) {
     Random random = new Random();
+    Player oldPlayer = playerMap.get(newPlayer.getPlayerId());
+    if (oldPlayer != null){
+      remove(oldPlayer.getPosition().posX, oldPlayer.getPosition().posY);
+    }
     this.playerMap.put(newPlayer.getPlayerId(), newPlayer);
     while(!this.add(random.nextInt(n), random.nextInt(n), newPlayer)){
 
