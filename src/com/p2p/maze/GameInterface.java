@@ -24,26 +24,12 @@ public interface GameInterface extends Remote {
   public GameState initPlayer(Player player) throws RemoteException;
 
   /**
-   * [Primary] Get latest game state from primary server
-   *
-   * @return game state (user input: 0)
-   */
-  public GameState getGameState() throws RemoteException;
-
-  /**
    * [Primary] Player move in the maze
    *
    * @param move movement direction (1: west, 2: south, 3: east, 4: north)
    * @return Game state
    */
   public GameState executeCommand(Player player, Game.Command move) throws RemoteException, NotBoundException;
-
-  /**
-   * [Primary] Player exit the game
-   *
-   * @param player (user input: 9)
-   */
-  public boolean exit(Player player) throws RemoteException;
 
   /**
    * [Primary <-> Backup] Ping each other every 2sec to check alive

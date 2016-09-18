@@ -49,6 +49,11 @@ public class Game implements GameInterface {
     return primaryServer != null && primaryServer.getPlayerId().equals(player.getPlayerId());
   }
 
+  private boolean isBackup() {
+    Player backupServer = gameState.getBackup();
+    return backupServer != null && backupServer.getPlayerId().equals(player.getPlayerId());
+  }
+
   /**
    * Contact tracker when player join the game, receive tracker state: n, k, primary, backup
    *
@@ -132,10 +137,10 @@ public class Game implements GameInterface {
       System.out.println("-----------\n");
       Player primaryPlayer = gameState.getPrimary();
       try {
+        // TODO: do not look for server inside while loop, only update new server when necessary
         serverRegistry = LocateRegistry.getRegistry(primaryPlayer.getIp(), primaryPlayer.getPortNumber());
         GameInterface stub = (GameInterface) serverRegistry.lookup(primaryPlayer.getPlayerId());
         switch (input.charAt(0)){
-
           case '0':
             updateGameState(stub.executeCommand(player, Command.GAME_STATE));
             break;
@@ -156,7 +161,8 @@ public class Game implements GameInterface {
             System.out.println("Exit!");
             System.exit(0);
             break;
-
+          default:
+            break;
         }
       } catch (RemoteException | NotBoundException e) {
         e.printStackTrace();
@@ -201,7 +207,6 @@ public class Game implements GameInterface {
 
       System.out.println("Player ready: " + playerId);
 
-      // infinite loop that waits for user input and make a move
       game.run();
 
     } catch (Exception e) {
@@ -223,11 +228,6 @@ public class Game implements GameInterface {
   @Override
   public GameState initPlayer(Player player) throws RemoteException {
     gameState.addNewPlayer(player);
-    return gameState;
-  }
-
-  @Override
-  public GameState getGameState() throws RemoteException {
     return gameState;
   }
 
@@ -262,25 +262,23 @@ public class Game implements GameInterface {
         System.err.println("Unrecognized command");
     }
     if (updated){
-      refreshGameStateUI();
+      refreshGameStateUI(); // TODO: UI update in primary server may be too frequent
       notifyBackup();
     }
     return gameState;
   }
 
   private void notifyBackup() throws RemoteException, NotBoundException {
+    if (!isPrimary()) {
+      System.err.println("Only primary server needs notify backup server on game change");
+      return;
+    }
     Player backupServer = gameState.getBackup();
-    if (backupServer != null && !backupServer.getPlayerId().equals(player.getPlayerId())){
+    if (backupServer != null) {
       Registry backupRegistry = LocateRegistry.getRegistry(backupServer.getIp(), backupServer.getPortNumber());
       GameInterface stub = (GameInterface) backupRegistry.lookup(backupServer.getPlayerId());
       stub.syncGameState(gameState);
     }
-  }
-
-  @Override
-  public boolean exit(Player player) throws RemoteException {
-    gameState.exitPlayer(player);
-    return true;
   }
 
   @Override
