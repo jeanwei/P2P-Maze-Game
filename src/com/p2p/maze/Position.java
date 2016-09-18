@@ -10,6 +10,9 @@ public class Position implements Serializable {
   public int posX;
   public int posY;
 
+  public Position() {
+  }
+
   public Position(int newPosX, int newPosY) {
     this.posX = newPosX;
     this.posY = newPosY;

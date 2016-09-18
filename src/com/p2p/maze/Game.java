@@ -134,38 +134,86 @@ public class Game implements GameInterface {
 
       System.out.println("input : " + input);
       System.out.println("-----------\n");
-      Player primaryPlayer = gameState.getPrimary();
-      try {
-        // TODO: do not look for server inside while loop, only update new server when necessary
-        serverRegistry = LocateRegistry.getRegistry(primaryPlayer.getIp(), primaryPlayer.getPortNumber());
-        GameInterface stub = (GameInterface) serverRegistry.lookup(primaryPlayer.getPlayerId());
-        switch (input.charAt(0)){
-          case '0':
-            updateGameState(stub.executeCommand(player, Command.GAME_STATE));
-            break;
-          case '1':
-            updateGameState(stub.executeCommand(player, Command.MOVE_WEST));
-            break;
-          case '2':
-            updateGameState(stub.executeCommand(player, Command.MOVE_SOUTH));
-            break;
-          case '3':
-            updateGameState(stub.executeCommand(player, Command.MOVE_EAST));
-            break;
-          case '4':
-            updateGameState(stub.executeCommand(player, Command.MOVE_NORTH));
-            break;
-          case '9':
-            stub.executeCommand(player, Command.EXIT);
-            System.out.println("Exit!");
-            System.exit(0);
-            break;
-          default:
-            break;
+      if (isPrimary()){
+        try{
+          play(input.charAt(0));
+        } catch (RemoteException | NotBoundException e) {
+          e.printStackTrace();
         }
-      } catch (RemoteException | NotBoundException e) {
-        e.printStackTrace();
+      } else {
+        boolean primaryNotFound = false;
+        try {
+          connectToServerAndPlay(gameState.getPrimary(), input.charAt(0));
+        } catch (RemoteException | NotBoundException e) {
+          e.printStackTrace();
+          primaryNotFound = true;
+        }
+
+        if (primaryNotFound){
+          try {
+            connectToServerAndPlay(gameState.getBackup(), input.charAt(0));
+          } catch (RemoteException | NotBoundException e) {
+            e.printStackTrace();
+          }
+        }
       }
+
+    }
+  }
+
+  private void play(Character commandChar) throws RemoteException, NotBoundException{
+    switch (commandChar){
+      case '0':
+        refreshGameStateUI();
+        break;
+      case '1':
+        updateGameState(executeCommand(player, Command.MOVE_WEST));
+        break;
+      case '2':
+        updateGameState(executeCommand(player, Command.MOVE_SOUTH));
+        break;
+      case '3':
+        updateGameState(executeCommand(player, Command.MOVE_EAST));
+        break;
+      case '4':
+        updateGameState(executeCommand(player, Command.MOVE_NORTH));
+        break;
+      case '9':
+        System.out.println("Exit!");
+        System.exit(0);
+        break;
+
+    }
+  }
+
+  private void connectToServerAndPlay(Player serverPlayer, Character commandChar) throws RemoteException, NotBoundException {
+
+  // TODO: do not look for server inside while loop, only update new server when necessary
+    serverRegistry = LocateRegistry.getRegistry(serverPlayer.getIp(), serverPlayer.getPortNumber());
+    GameInterface stub = (GameInterface) serverRegistry.lookup(serverPlayer.getPlayerId());
+
+    switch (commandChar){
+      case '0':
+        updateGameState(stub.executeCommand(player, Command.GAME_STATE));
+        break;
+      case '1':
+        updateGameState(stub.executeCommand(player, Command.MOVE_WEST));
+        break;
+      case '2':
+        updateGameState(stub.executeCommand(player, Command.MOVE_SOUTH));
+        break;
+      case '3':
+        updateGameState(stub.executeCommand(player, Command.MOVE_EAST));
+        break;
+      case '4':
+        updateGameState(stub.executeCommand(player, Command.MOVE_NORTH));
+        break;
+      case '9':
+        stub.executeCommand(player, Command.EXIT);
+        System.out.println("Exit!");
+        System.exit(0);
+        break;
+
     }
   }
 
@@ -227,11 +275,13 @@ public class Game implements GameInterface {
   @Override
   public GameState initPlayer(Player player) throws RemoteException, NotBoundException {
     gameState.addNewPlayer(player);
-    refreshGameStateUI();
     Player backupServer = gameState.getBackup();
-    if (!player.getPlayerId().equals(backupServer.getPlayerId())){
+    if (backupServer == null){
+      gameState.setBackup(player);
+    } else if (!player.getPlayerId().equals(backupServer.getPlayerId())){
       notifyBackup();
     }
+    refreshGameStateUI();
     return gameState;
   }
 
@@ -278,7 +328,7 @@ public class Game implements GameInterface {
       return;
     }
     Player backupServer = gameState.getBackup();
-    if (backupServer != null) {
+    if (backupServer != null && !backupServer.getPlayerId().equals(player.getPlayerId())) {
       Registry backupRegistry = LocateRegistry.getRegistry(backupServer.getIp(), backupServer.getPortNumber());
       GameInterface stub = (GameInterface) backupRegistry.lookup(backupServer.getPlayerId());
       stub.syncGameState(gameState);
@@ -297,7 +347,7 @@ public class Game implements GameInterface {
   }
 
   @Override
-  public void promoteToBackupServer(String playerId, GameState gameState) throws RemoteException {
+  public void promoteToBackupServer(Player player, GameState gameState) throws RemoteException {
     this.gameState = gameState;
     startKeepAlive();
   }
@@ -373,7 +423,7 @@ public class Game implements GameInterface {
 
           Registry registry = LocateRegistry.getRegistry(next.getIp(), next.getPortNumber());
           GameInterface stub = (GameInterface) registry.lookup(next.getPlayerId());
-          stub.promoteToBackupServer(player.getPlayerId(), gameState);
+          stub.promoteToBackupServer(player, gameState);
           return;
 
         } catch (RemoteException | NotBoundException e) {
