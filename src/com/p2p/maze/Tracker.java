@@ -56,6 +56,11 @@ public class Tracker implements TrackerInterface {
     trackerState.setBackup(backupServer);
   }
 
+  @Override
+  public TrackerState getTrackerState() throws RemoteException {
+    return trackerState;
+  }
+
   public static void main(String args[]) {
 
     if (args.length < 3) {

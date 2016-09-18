@@ -77,7 +77,8 @@ public class GameState extends TrackerState {
 
   private synchronized void collectTreasureAndUpdateScore(Player player, int positionX, int positionY) {
     Integer score = player.getScore();
-    player.setScore(score++);
+    score++;
+    player.setScore(score);
     // only if player size and K smaller than size of map
     if((this.playerMap.keySet().size() + this.k) <= this.n * this.n)
     {
@@ -114,6 +115,10 @@ public class GameState extends TrackerState {
     player = this.playerMap.get(playerId);
     this.remove(player.getPosition().posX, player.getPosition().posY);
     this.playerMap.remove(playerId);
+    Player backupServer = getBackup();
+    if (backupServer != null && backupServer.getPlayerId().equals(playerId)){
+      setBackup(null);
+    }
     return true;
   }
 
@@ -139,6 +144,7 @@ public class GameState extends TrackerState {
     String newLineStr = System.getProperty("line.separator");
     stringBuffer.append(newLineStr);
     stringBuffer.append("maze=" + newLineStr);
+    int index;
     if (maze == null){
       stringBuffer.append("null");
     } else {
@@ -149,10 +155,22 @@ public class GameState extends TrackerState {
             stringBuffer.append("    ");
             continue;
           } else if (i == 0){
-            stringBuffer.append((j-1) + "   ");
+            index = j - 1;
+            if (index <10){
+              stringBuffer.append("0"+(j-1) + "  ");
+            } else {
+              stringBuffer.append((j-1) + "   ");
+            }
+
             continue;
           } else if (j == 0){
-            stringBuffer.append((i-1) + "   ");
+            index = i - 1;
+            if (index <10){
+              stringBuffer.append("0"+index + "  ");
+            } else {
+              stringBuffer.append(index + "   ");
+            }
+
             continue;
           }
           String value = maze[i-1][j-1];
