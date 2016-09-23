@@ -1,5 +1,6 @@
 package com.p2p.maze;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +21,7 @@ public class GameState extends TrackerState {
     this.n = trackerState.getN();
     this.k = trackerState.getK();
     this.primary = trackerState.getPrimary();
-    this.backup = trackerState.getBackup();
+//    this.backup = trackerState.getBackup();
   }
 
   public void initGameState(){
@@ -44,9 +45,11 @@ public class GameState extends TrackerState {
       remove(oldPlayer.getPosition().posX, oldPlayer.getPosition().posY);
     }
     this.playerMap.put(newPlayer.getPlayerId(), newPlayer);
+    System.out.println(LocalDateTime.now() + " adding new player " + newPlayer.getPlayerId());
     while(!this.add(random.nextInt(n), random.nextInt(n), newPlayer)){
 
     }
+    System.out.println(LocalDateTime.now() + " added new player " + newPlayer.getPlayerId());
   }
 
   private synchronized boolean addTreasure(int newPositionX, int newPositionY) {
@@ -83,9 +86,11 @@ public class GameState extends TrackerState {
     if((this.playerMap.keySet().size() + this.k) <= this.n * this.n)
     {
       Random random = new Random();
+      System.out.println(LocalDateTime.now() + " adding Treasure " + player.getPlayerId());
       while(!this.addTreasure(random.nextInt(n), random.nextInt(n))){
 
       }
+      System.out.println(LocalDateTime.now() + " added Treasure " + player.getPlayerId());
     }
     this.remove(positionX, positionY);
   }
@@ -128,6 +133,16 @@ public class GameState extends TrackerState {
 
   public Map<String, Player> getPlayers() {
     return this.playerMap;
+  }
+
+  public String getPlayerInfo(){
+     return "GameState{" +
+         "n=" + n +
+         ", k=" + k +
+         ", primary='" + primary + '\'' +
+         ", backup='" + backup + '\'' +
+         ", playerPosition='" + Arrays.asList(playerMap) + '\'' +
+         '}';
   }
 
   @Override

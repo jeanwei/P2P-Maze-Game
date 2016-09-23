@@ -40,10 +40,10 @@ public class Tracker implements TrackerInterface {
       return trackerState;
     }
 
-    Player backup = trackerState.getBackup();
-    if (backup == null) {
-      trackerState.setBackup(player);
-    }
+//    Player backup = trackerState.getBackup();
+//    if (backup == null) {
+//      trackerState.setBackup(player);
+//    }
 
     System.err.println("register playerId end:" + player.getPlayerId());
     System.err.println(trackerState.toString());
@@ -62,6 +62,8 @@ public class Tracker implements TrackerInterface {
 
   @Override
   public synchronized TrackerState getTrackerState() throws RemoteException {
+    System.err.println("retried track states:");
+    System.err.println(trackerState.toString());
     return trackerState;
   }
 
