@@ -129,10 +129,6 @@ public class GameState extends TrackerState {
     return true;
   }
 
-  public String[][] getMaze() {
-    return maze;
-  }
-
   public Player getPlayer(String playerId) {
     return this.playerMap.get(playerId);
   }
