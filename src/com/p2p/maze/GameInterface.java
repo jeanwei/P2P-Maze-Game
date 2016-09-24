@@ -51,4 +51,6 @@ public interface GameInterface extends Remote {
    * @param gameState game state
    */
   public void promoteToBackupServer(GameState gameState) throws RemoteException;
+
+  public GameState getGameState() throws RemoteException;
 }
