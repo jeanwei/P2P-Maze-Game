@@ -20,12 +20,9 @@ public class Tracker implements TrackerInterface {
 
   private static final Logger LOGGER = Logger.getLogger(Tracker.class.getSimpleName());
 
-  private int portNumber;
-
   private TrackerState trackerState = new TrackerState();
 
-  public Tracker(int portNumber, int n, int k) {
-    this.portNumber = portNumber;
+  public Tracker(int n, int k) {
     this.trackerState.setN(n);
     this.trackerState.setK(k);
   }
@@ -33,17 +30,17 @@ public class Tracker implements TrackerInterface {
   @Override
   public synchronized TrackerState register(Player player) throws RemoteException {
 
-    LOGGER.info(String.format("player %s, start: %s", player.getPlayerId(), trackerState));
+    LOGGER.info(String.format("register player %s start: %s", player.getPlayerId(), trackerState));
 
     Player primary = trackerState.getPrimary();
     if (primary == null) {
       trackerState.setPrimary(player);
 
-      LOGGER.info(String.format("player %s, as primary server", player.getPlayerId()));
+      LOGGER.info(String.format("register player %s as primary server", player.getPlayerId()));
       return trackerState;
     }
 
-    LOGGER.info(String.format("player %s, end: %s", player.getPlayerId(), trackerState));
+    LOGGER.info(String.format("register player %s end: %s", player.getPlayerId(), trackerState));
 
     return trackerState;
   }
@@ -67,7 +64,7 @@ public class Tracker implements TrackerInterface {
     initLogger();
 
     if (args.length < 3) {
-      LOGGER.warning("Invalid input to create tracker");
+      LOGGER.warning("Invalid input to create tracker. Expect port, n, k");
       return;
     }
 
@@ -76,15 +73,15 @@ public class Tracker implements TrackerInterface {
       int n = Integer.parseInt(args[1]);
       int k = Integer.parseInt(args[2]);
 
-      Tracker tracker = new Tracker(portNumber, n, k);
+      Tracker tracker = new Tracker(n, k);
       TrackerInterface stub = (TrackerInterface) UnicastRemoteObject.exportObject(tracker, 0);
 
       // Bind the remote object's stub in the registry
-      String serverIP = "localhost";
-      Registry registry = LocateRegistry.getRegistry(serverIP, portNumber);
+      Registry registry = LocateRegistry.getRegistry("localhost", portNumber);
       registry.rebind("Tracker", stub);
 
       LOGGER.info(String.format("Tracker ready. port: %d, N: %d, K: %d", portNumber, n, k));
+
     } catch (RemoteException e) {
       LOGGER.severe("Server exception: " + e.toString());
       e.printStackTrace();

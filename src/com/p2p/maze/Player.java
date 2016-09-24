@@ -9,7 +9,7 @@ public class Player implements Serializable {
   private String playerId = null;
   private String ip;
   private int portNumber;
-  private Position position = new Position();
+  private Position position;
   private int score;
 
   public Player(String playerId, String ip, int portNumber) {

@@ -9,7 +9,7 @@ import java.util.logging.LogRecord;
 
 public class LogFormatter extends Formatter {
 
-    private static final DateFormat df = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss.SSS");
+    private static final DateFormat df = new SimpleDateFormat("yyyyMMdd hh:mm:ss.SSS");
 
     public String format(LogRecord record) {
         StringBuilder builder = new StringBuilder(1000);
