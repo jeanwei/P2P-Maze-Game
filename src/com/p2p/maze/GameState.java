@@ -56,10 +56,10 @@ public class GameState extends TrackerState {
   }
 
   private synchronized boolean addTreasure(int newPositionX, int newPositionY) {
-    if(maze[newPositionX][newPositionY] != null){
+    if(maze[newPositionY][newPositionX] != null){
       return false;
     } else {
-      maze[newPositionX][newPositionY] = TREASURE_VALUE;
+      maze[newPositionY][newPositionX] = TREASURE_VALUE;
     }
     return true;
   }
@@ -99,22 +99,22 @@ public class GameState extends TrackerState {
 
   private synchronized boolean add(int newPositionX, int newPositionY, Player player) {
     String playerID =  player.getPlayerId();
-      if (maze[newPositionX][newPositionY] != null) {
-      if (TREASURE_VALUE.equals(maze[newPositionX][newPositionY])){
+      if (maze[newPositionY][newPositionX] != null) {
+      if (TREASURE_VALUE.equals(maze[newPositionY][newPositionX])){
         collectTreasureAndUpdateScore(player, newPositionX, newPositionY);
       } else {
         return false;
       }
     }
 
-    maze[newPositionX][newPositionY] = playerID;
+    maze[newPositionY][newPositionX] = playerID;
     playerMap.get(playerID).getPosition().posX = newPositionX;
     playerMap.get(playerID).getPosition().posY = newPositionY;
     return true;
   }
 
   private void remove(int oldPositionX , int oldPositionY) {
-    maze[oldPositionX][oldPositionY] = null;
+    maze[oldPositionY][oldPositionX] = null;
   }
 
   public synchronized boolean exitPlayer(Player player){

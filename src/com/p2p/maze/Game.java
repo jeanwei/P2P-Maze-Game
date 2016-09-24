@@ -33,6 +33,8 @@ public class Game implements GameInterface {
 
   private final Object lock = new Object();
 
+  private MazeGUI gui;
+
   public enum Command {
     GAME_STATE(0),
     MOVE_WEST(1),
@@ -149,7 +151,7 @@ public class Game implements GameInterface {
     } else {
       LOGGER.warning("Primary server not found!");
     }
-
+    this.gui = new MazeGUI(this.player, this.gameState);
     LOGGER.info("game state after init: " + gameState);
     LOGGER.info("player after init: " + player);
   }
@@ -176,7 +178,8 @@ public class Game implements GameInterface {
 
   private void refreshGameStateUI(){
 //    LOGGER.info("game state after refreshing: " + gameState);
-    LOGGER.info("player after refreshing: " + player);
+    LOGGER.info("player after refreshing: " + player.toString());
+    this.gui.updateGameState(this.gameState);
   }
 
   /**
@@ -464,19 +467,19 @@ public class Game implements GameInterface {
         break;
 
       case MOVE_WEST:
-        updated = gameState.move(player, 0, -1);
+        updated = gameState.move(player, -1, 0);
         break;
 
       case MOVE_SOUTH:
-        updated = gameState.move(player, 1, 0);
-        break;
-
-      case MOVE_EAST:
         updated = gameState.move(player, 0, 1);
         break;
 
+      case MOVE_EAST:
+        updated = gameState.move(player, 1, 0);
+        break;
+
       case MOVE_NORTH:
-        updated =  gameState.move(player, -1, 0);
+        updated =  gameState.move(player, 0, -1);
         break;
 
       case EXIT:

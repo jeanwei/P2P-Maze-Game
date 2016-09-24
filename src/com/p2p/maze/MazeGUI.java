@@ -78,11 +78,11 @@ public class MazeGUI extends JFrame{
                     this.mazeGrid[i][j].setText("");
                 } else if (gameState.getPrimary() != null &&
                         maze[i][j].equals(gameState.getPrimary().getPlayerId())) {
-                    this.mazeGrid[i][j].setText(maze[i][j] + " Primary");
+                    this.mazeGrid[i][j].setText(String.format("(%2d, %2d) ", i, j) + maze[i][j] + " P");
                 } else if (gameState.getBackup() != null &&
                         maze[i][j].equals(gameState.getBackup().getPlayerId())) {
-                    this.mazeGrid[i][j].setText(maze[i][j] + " Backup");
-                } else this.mazeGrid[i][j].setText(maze[i][j]);
+                    this.mazeGrid[i][j].setText(String.format("(%2d, %2d) ", i, j) + maze[i][j] + " B");
+                } else this.mazeGrid[i][j].setText(String.format("(%2d, %2d) ", i, j) + maze[i][j]);
             }
         }
         this.mazePanel.repaint();
