@@ -1,0 +1,157 @@
+register playerId start:ab
+TrackerState {n=15, k=10, primary='null', backup='null'}
+
+register playerId start:ac
+TrackerState {n=15, k=10, primary='Player{playerId='ab', ip='172.23.186.23', portNumber=1099, position=Position{posX=0, posY=0}, score=0}', backup='null'}
+register playerId end:ac
+TrackerState {n=15, k=10, primary='Player{playerId='ab', ip='172.23.186.23', portNumber=1099, position=Position{posX=0, posY=0}, score=0}', backup='Player{playerId='ac', ip='172.23.186.23', portNumber=1099, position=Position{posX=0, posY=0}, score=0}'}
+
+register playerId start:ad
+TrackerState {n=15, k=10, primary='Player{playerId='ab', ip='172.23.186.23', portNumber=1099, position=Position{posX=0, posY=0}, score=0}', backup='Player{playerId='ac', ip='172.23.186.23', portNumber=1099, position=Position{posX=0, posY=0}, score=0}'}
+register playerId end:ad
+TrackerState {n=15, k=10, primary='Player{playerId='ab', ip='172.23.186.23', portNumber=1099, position=Position{posX=0, posY=0}, score=0}', backup='Player{playerId='ac', ip='172.23.186.23', portNumber=1099, position=Position{posX=0, posY=0}, score=0}'}
+
+register playerId start:ae
+TrackerState {n=15, k=10, primary='Player{playerId='ab', ip='172.23.186.23', portNumber=1099, position=Position{posX=0, posY=0}, score=0}', backup='Player{playerId='ac', ip='172.23.186.23', portNumber=1099, position=Position{posX=0, posY=0}, score=0}'}
+register playerId end:ae
+TrackerState {n=15, k=10, primary='Player{playerId='ab', ip='172.23.186.23', portNumber=1099, position=Position{posX=0, posY=0}, score=0}', backup='Player{playerId='ac', ip='172.23.186.23', portNumber=1099, position=Position{posX=0, posY=0}, score=0}'}
+
+register playerId start:af
+TrackerState {n=15, k=10, primary='Player{playerId='ac', ip='172.23.186.23', portNumber=1099, position=Position{posX=12, posY=11}, score=3}', backup='Player{playerId='ae', ip='172.23.186.23', portNumber=1099, position=Position{posX=1, posY=5}, score=2}'}
+register playerId end:af
+TrackerState {n=15, k=10, primary='Player{playerId='ac', ip='172.23.186.23', portNumber=1099, position=Position{posX=12, posY=11}, score=3}', backup='Player{playerId='ae', ip='172.23.186.23', portNumber=1099, position=Position{posX=1, posY=5}, score=2}'}
+
+register playerId start:ah
+TrackerState {n=15, k=10, primary='Player{playerId='ac', ip='172.23.186.23', portNumber=1099, position=Position{posX=12, posY=11}, score=3}', backup='Player{playerId='ae', ip='172.23.186.23', portNumber=1099, position=Position{posX=1, posY=5}, score=2}'}
+register playerId end:ah
+TrackerState {n=15, k=10, primary='Player{playerId='ac', ip='172.23.186.23', portNumber=1099, position=Position{posX=12, posY=11}, score=3}', backup='Player{playerId='ae', ip='172.23.186.23', portNumber=1099, position=Position{posX=1, posY=5}, score=2}'}
+
+register playerId start:ai
+TrackerState {n=15, k=10, primary='Player{playerId='ac', ip='172.23.186.23', portNumber=1099, position=Position{posX=12, posY=11}, score=3}', backup='Player{playerId='ae', ip='172.23.186.23', portNumber=1099, position=Position{posX=1, posY=5}, score=2}'}
+register playerId end:ai
+TrackerState {n=15, k=10, primary='Player{playerId='ac', ip='172.23.186.23', portNumber=1099, position=Position{posX=12, posY=11}, score=3}', backup='Player{playerId='ae', ip='172.23.186.23', portNumber=1099, position=Position{posX=1, posY=5}, score=2}'}
+
+register playerId start:aj
+TrackerState {n=15, k=10, primary='Player{playerId='ac', ip='172.23.186.23', portNumber=1099, position=Position{posX=12, posY=11}, score=3}', backup='Player{playerId='ae', ip='172.23.186.23', portNumber=1099, position=Position{posX=1, posY=5}, score=2}'}
+register playerId end:aj
+TrackerState {n=15, k=10, primary='Player{playerId='ac', ip='172.23.186.23', portNumber=1099, position=Position{posX=12, posY=11}, score=3}', backup='Player{playerId='ae', ip='172.23.186.23', portNumber=1099, position=Position{posX=1, posY=5}, score=2}'}
+
+register playerId start:ak
+TrackerState {n=15, k=10, primary='Player{playerId='ac', ip='172.23.186.23', portNumber=1099, position=Position{posX=14, posY=11}, score=3}', backup='Player{playerId='ai', ip='172.23.186.23', portNumber=1099, position=Position{posX=14, posY=0}, score=0}'}
+register playerId end:ak
+TrackerState {n=15, k=10, primary='Player{playerId='ac', ip='172.23.186.23', portNumber=1099, position=Position{posX=14, posY=11}, score=3}', backup='Player{playerId='ai', ip='172.23.186.23', portNumber=1099, position=Position{posX=14, posY=0}, score=0}'}
+
+register playerId start:am
+TrackerState {n=15, k=10, primary='Player{playerId='ac', ip='172.23.186.23', portNumber=1099, position=Position{posX=13, posY=12}, score=3}', backup='Player{playerId='ak', ip='172.23.186.23', portNumber=1099, position=Position{posX=4, posY=7}, score=0}'}
+register playerId end:am
+TrackerState {n=15, k=10, primary='Player{playerId='ac', ip='172.23.186.23', portNumber=1099, position=Position{posX=13, posY=12}, score=3}', backup='Player{playerId='ak', ip='172.23.186.23', portNumber=1099, position=Position{posX=4, posY=7}, score=0}'}
+
+register playerId start:ao
+TrackerState {n=15, k=10, primary='Player{playerId='ac', ip='172.23.186.23', portNumber=1099, position=Position{posX=13, posY=12}, score=3}', backup='Player{playerId='ak', ip='172.23.186.23', portNumber=1099, position=Position{posX=4, posY=7}, score=0}'}
+register playerId end:ao
+TrackerState {n=15, k=10, primary='Player{playerId='ac', ip='172.23.186.23', portNumber=1099, position=Position{posX=13, posY=12}, score=3}', backup='Player{playerId='ak', ip='172.23.186.23', portNumber=1099, position=Position{posX=4, posY=7}, score=0}'}
+
+register playerId start:ap
+TrackerState {n=15, k=10, primary='Player{playerId='ac', ip='172.23.186.23', portNumber=1099, position=Position{posX=13, posY=12}, score=3}', backup='Player{playerId='ak', ip='172.23.186.23', portNumber=1099, position=Position{posX=4, posY=7}, score=0}'}
+register playerId end:ap
+TrackerState {n=15, k=10, primary='Player{playerId='ac', ip='172.23.186.23', portNumber=1099, position=Position{posX=13, posY=12}, score=3}', backup='Player{playerId='ak', ip='172.23.186.23', portNumber=1099, position=Position{posX=4, posY=7}, score=0}'}
+
+register playerId start:aq
+TrackerState {n=15, k=10, primary='Player{playerId='ac', ip='172.23.186.23', portNumber=1099, position=Position{posX=13, posY=12}, score=3}', backup='Player{playerId='ak', ip='172.23.186.23', portNumber=1099, position=Position{posX=4, posY=7}, score=0}'}
+register playerId end:aq
+TrackerState {n=15, k=10, primary='Player{playerId='ac', ip='172.23.186.23', portNumber=1099, position=Position{posX=13, posY=12}, score=3}', backup='Player{playerId='ak', ip='172.23.186.23', portNumber=1099, position=Position{posX=4, posY=7}, score=0}'}
+
+register playerId start:ar
+TrackerState {n=15, k=10, primary='Player{playerId='ac', ip='172.23.186.23', portNumber=1099, position=Position{posX=12, posY=11}, score=3}', backup='Player{playerId='ao', ip='172.23.186.23', portNumber=1099, position=Position{posX=13, posY=5}, score=0}'}
+register playerId end:ar
+TrackerState {n=15, k=10, primary='Player{playerId='ac', ip='172.23.186.23', portNumber=1099, position=Position{posX=12, posY=11}, score=3}', backup='Player{playerId='ao', ip='172.23.186.23', portNumber=1099, position=Position{posX=13, posY=5}, score=0}'}
+
+register playerId start:as
+TrackerState {n=15, k=10, primary='Player{playerId='ao', ip='172.23.186.23', portNumber=1099, position=Position{posX=11, posY=4}, score=0}', backup='null'}
+register playerId end:as
+TrackerState {n=15, k=10, primary='Player{playerId='ao', ip='172.23.186.23', portNumber=1099, position=Position{posX=11, posY=4}, score=0}', backup='Player{playerId='as', ip='172.23.186.23', portNumber=1099, position=Position{posX=0, posY=0}, score=0}'}
+
+register playerId start:au
+TrackerState {n=15, k=10, primary='Player{playerId='ao', ip='172.23.186.23', portNumber=1099, position=Position{posX=11, posY=4}, score=0}', backup='Player{playerId='as', ip='172.23.186.23', portNumber=1099, position=Position{posX=0, posY=0}, score=0}'}
+register playerId end:au
+TrackerState {n=15, k=10, primary='Player{playerId='ao', ip='172.23.186.23', portNumber=1099, position=Position{posX=11, posY=4}, score=0}', backup='Player{playerId='as', ip='172.23.186.23', portNumber=1099, position=Position{posX=0, posY=0}, score=0}'}
+
+register playerId start:av
+TrackerState {n=15, k=10, primary='Player{playerId='ao', ip='172.23.186.23', portNumber=1099, position=Position{posX=11, posY=4}, score=0}', backup='Player{playerId='as', ip='172.23.186.23', portNumber=1099, position=Position{posX=0, posY=0}, score=0}'}
+register playerId end:av
+TrackerState {n=15, k=10, primary='Player{playerId='ao', ip='172.23.186.23', portNumber=1099, position=Position{posX=11, posY=4}, score=0}', backup='Player{playerId='as', ip='172.23.186.23', portNumber=1099, position=Position{posX=0, posY=0}, score=0}'}
+
+register playerId start:aw
+TrackerState {n=15, k=10, primary='Player{playerId='ao', ip='172.23.186.23', portNumber=1099, position=Position{posX=11, posY=4}, score=0}', backup='Player{playerId='as', ip='172.23.186.23', portNumber=1099, position=Position{posX=0, posY=0}, score=0}'}
+register playerId end:aw
+TrackerState {n=15, k=10, primary='Player{playerId='ao', ip='172.23.186.23', portNumber=1099, position=Position{posX=11, posY=4}, score=0}', backup='Player{playerId='as', ip='172.23.186.23', portNumber=1099, position=Position{posX=0, posY=0}, score=0}'}
+
+register playerId start:ay
+TrackerState {n=15, k=10, primary='Player{playerId='ao', ip='172.23.186.23', portNumber=1099, position=Position{posX=11, posY=4}, score=0}', backup='Player{playerId='as', ip='172.23.186.23', portNumber=1099, position=Position{posX=0, posY=0}, score=0}'}
+register playerId end:ay
+TrackerState {n=15, k=10, primary='Player{playerId='ao', ip='172.23.186.23', portNumber=1099, position=Position{posX=11, posY=4}, score=0}', backup='Player{playerId='as', ip='172.23.186.23', portNumber=1099, position=Position{posX=0, posY=0}, score=0}'}
+
+register playerId start:ba
+TrackerState {n=15, k=10, primary='Player{playerId='ao', ip='172.23.186.23', portNumber=1099, position=Position{posX=11, posY=4}, score=0}', backup='Player{playerId='as', ip='172.23.186.23', portNumber=1099, position=Position{posX=0, posY=0}, score=0}'}
+register playerId end:ba
+TrackerState {n=15, k=10, primary='Player{playerId='ao', ip='172.23.186.23', portNumber=1099, position=Position{posX=11, posY=4}, score=0}', backup='Player{playerId='as', ip='172.23.186.23', portNumber=1099, position=Position{posX=0, posY=0}, score=0}'}
+
+register playerId start:bb
+TrackerState {n=15, k=10, primary='Player{playerId='as', ip='172.23.186.23', portNumber=1099, position=Position{posX=3, posY=9}, score=0}', backup='Player{playerId='au', ip='172.23.186.23', portNumber=1099, position=Position{posX=4, posY=13}, score=0}'}
+register playerId end:bb
+TrackerState {n=15, k=10, primary='Player{playerId='as', ip='172.23.186.23', portNumber=1099, position=Position{posX=3, posY=9}, score=0}', backup='Player{playerId='au', ip='172.23.186.23', portNumber=1099, position=Position{posX=4, posY=13}, score=0}'}
+
+register playerId start:bd
+TrackerState {n=15, k=10, primary='Player{playerId='as', ip='172.23.186.23', portNumber=1099, position=Position{posX=3, posY=9}, score=0}', backup='Player{playerId='bb', ip='172.23.186.23', portNumber=1099, position=Position{posX=7, posY=3}, score=0}'}
+register playerId end:bd
+TrackerState {n=15, k=10, primary='Player{playerId='as', ip='172.23.186.23', portNumber=1099, position=Position{posX=3, posY=9}, score=0}', backup='Player{playerId='bb', ip='172.23.186.23', portNumber=1099, position=Position{posX=7, posY=3}, score=0}'}
+
+register playerId start:be
+TrackerState {n=15, k=10, primary='Player{playerId='as', ip='172.23.186.23', portNumber=1099, position=Position{posX=3, posY=9}, score=0}', backup='Player{playerId='bb', ip='172.23.186.23', portNumber=1099, position=Position{posX=7, posY=3}, score=0}'}
+register playerId end:be
+TrackerState {n=15, k=10, primary='Player{playerId='as', ip='172.23.186.23', portNumber=1099, position=Position{posX=3, posY=9}, score=0}', backup='Player{playerId='bb', ip='172.23.186.23', portNumber=1099, position=Position{posX=7, posY=3}, score=0}'}
+
+register playerId start:bf
+TrackerState {n=15, k=10, primary='Player{playerId='as', ip='172.23.186.23', portNumber=1099, position=Position{posX=3, posY=9}, score=0}', backup='Player{playerId='bb', ip='172.23.186.23', portNumber=1099, position=Position{posX=7, posY=3}, score=0}'}
+register playerId end:bf
+TrackerState {n=15, k=10, primary='Player{playerId='as', ip='172.23.186.23', portNumber=1099, position=Position{posX=3, posY=9}, score=0}', backup='Player{playerId='bb', ip='172.23.186.23', portNumber=1099, position=Position{posX=7, posY=3}, score=0}'}
+
+register playerId start:bg
+TrackerState {n=15, k=10, primary='Player{playerId='as', ip='172.23.186.23', portNumber=1099, position=Position{posX=3, posY=9}, score=0}', backup='Player{playerId='bb', ip='172.23.186.23', portNumber=1099, position=Position{posX=7, posY=3}, score=0}'}
+register playerId end:bg
+TrackerState {n=15, k=10, primary='Player{playerId='as', ip='172.23.186.23', portNumber=1099, position=Position{posX=3, posY=9}, score=0}', backup='Player{playerId='bb', ip='172.23.186.23', portNumber=1099, position=Position{posX=7, posY=3}, score=0}'}
+
+register playerId start:bh
+TrackerState {n=15, k=10, primary='Player{playerId='as', ip='172.23.186.23', portNumber=1099, position=Position{posX=3, posY=9}, score=0}', backup='Player{playerId='bb', ip='172.23.186.23', portNumber=1099, position=Position{posX=7, posY=3}, score=0}'}
+register playerId end:bh
+TrackerState {n=15, k=10, primary='Player{playerId='as', ip='172.23.186.23', portNumber=1099, position=Position{posX=3, posY=9}, score=0}', backup='Player{playerId='bb', ip='172.23.186.23', portNumber=1099, position=Position{posX=7, posY=3}, score=0}'}
+
+register playerId start:bi
+TrackerState {n=15, k=10, primary='Player{playerId='as', ip='172.23.186.23', portNumber=1099, position=Position{posX=3, posY=9}, score=0}', backup='Player{playerId='bb', ip='172.23.186.23', portNumber=1099, position=Position{posX=7, posY=3}, score=0}'}
+register playerId end:bi
+TrackerState {n=15, k=10, primary='Player{playerId='as', ip='172.23.186.23', portNumber=1099, position=Position{posX=3, posY=9}, score=0}', backup='Player{playerId='bb', ip='172.23.186.23', portNumber=1099, position=Position{posX=7, posY=3}, score=0}'}
+
+register playerId start:bk
+TrackerState {n=15, k=10, primary='Player{playerId='as', ip='172.23.186.23', portNumber=1099, position=Position{posX=3, posY=9}, score=0}', backup='Player{playerId='bb', ip='172.23.186.23', portNumber=1099, position=Position{posX=7, posY=3}, score=0}'}
+register playerId end:bk
+TrackerState {n=15, k=10, primary='Player{playerId='as', ip='172.23.186.23', portNumber=1099, position=Position{posX=3, posY=9}, score=0}', backup='Player{playerId='bb', ip='172.23.186.23', portNumber=1099, position=Position{posX=7, posY=3}, score=0}'}
+
+register playerId start:bn
+TrackerState {n=15, k=10, primary='Player{playerId='as', ip='172.23.186.23', portNumber=1099, position=Position{posX=3, posY=9}, score=0}', backup='Player{playerId='bb', ip='172.23.186.23', portNumber=1099, position=Position{posX=7, posY=3}, score=0}'}
+register playerId end:bn
+TrackerState {n=15, k=10, primary='Player{playerId='as', ip='172.23.186.23', portNumber=1099, position=Position{posX=3, posY=9}, score=0}', backup='Player{playerId='bb', ip='172.23.186.23', portNumber=1099, position=Position{posX=7, posY=3}, score=0}'}
+
+register playerId start:bo
+TrackerState {n=15, k=10, primary='Player{playerId='as', ip='172.23.186.23', portNumber=1099, position=Position{posX=3, posY=9}, score=0}', backup='Player{playerId='bb', ip='172.23.186.23', portNumber=1099, position=Position{posX=7, posY=3}, score=0}'}
+register playerId end:bo
+TrackerState {n=15, k=10, primary='Player{playerId='as', ip='172.23.186.23', portNumber=1099, position=Position{posX=3, posY=9}, score=0}', backup='Player{playerId='bb', ip='172.23.186.23', portNumber=1099, position=Position{posX=7, posY=3}, score=0}'}
+
+register playerId start:bp
+TrackerState {n=15, k=10, primary='Player{playerId='as', ip='172.23.186.23', portNumber=1099, position=Position{posX=3, posY=9}, score=0}', backup='Player{playerId='bb', ip='172.23.186.23', portNumber=1099, position=Position{posX=7, posY=3}, score=0}'}
+register playerId end:bp
+TrackerState {n=15, k=10, primary='Player{playerId='as', ip='172.23.186.23', portNumber=1099, position=Position{posX=3, posY=9}, score=0}', backup='Player{playerId='bb', ip='172.23.186.23', portNumber=1099, position=Position{posX=7, posY=3}, score=0}'}
+
+register playerId start:bq
+TrackerState {n=15, k=10, primary='Player{playerId='as', ip='172.23.186.23', portNumber=1099, position=Position{posX=3, posY=9}, score=0}', backup='Player{playerId='bb', ip='172.23.186.23', portNumber=1099, position=Position{posX=7, posY=3}, score=0}'}
+register playerId end:bq
+TrackerState {n=15, k=10, primary='Player{playerId='as', ip='172.23.186.23', portNumber=1099, position=Position{posX=3, posY=9}, score=0}', backup='Player{playerId='bb', ip='172.23.186.23', portNumber=1099, position=Position{posX=7, posY=3}, score=0}'}
