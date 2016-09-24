@@ -24,7 +24,7 @@ public class GameState extends TrackerState {
     this.n = trackerState.getN();
     this.k = trackerState.getK();
     this.primary = trackerState.getPrimary();
-//    this.backup = trackerState.getBackup();
+    this.backup = trackerState.getBackup();
   }
 
   public void initGameState(){
@@ -127,6 +127,10 @@ public class GameState extends TrackerState {
       setBackup(null);
     }
     return true;
+  }
+
+  public String[][] getMaze() {
+    return maze;
   }
 
   public Player getPlayer(String playerId) {

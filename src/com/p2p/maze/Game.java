@@ -127,18 +127,28 @@ public class Game implements GameInterface {
           }
         } catch (Exception e) {
           LOGGER.severe("initial connection error");
+          LOGGER.warning("currentG GameState: " + gameState);
+          Player backup = gameState.getBackup();
 
-          TrackerInterface stub = (TrackerInterface) trackerRegistry.lookup("Tracker");
-          TrackerState trackerState = stub.getTrackerState();
-          gameState = new GameState(trackerState);
-          gameState.setBackup(trackerState.getBackup());
+          Player newPrimary = null;
+
+          if (backup != null){
+            Registry backupServerRegistry  = LocateRegistry.getRegistry(backup.getIp(), backup.getPortNumber());
+            GameInterface backupServerGameInterface = (GameInterface) backupServerRegistry.lookup(backup.getPlayerId());
+            GameState backupGameSate= backupServerGameInterface.getGameState();
+            newPrimary = backupGameSate.getPrimary();
+            gameState.setPrimary(newPrimary);
+            gameState.setBackup(backupGameSate.getBackup());
+          }
 
           LOGGER.warning("contactTracker reconnected GameState: " + gameState);
 
-          // TODO: this could cause further exception!!
-          server = gameState.getPrimary();
-          serverRegistry = LocateRegistry.getRegistry(server.getIp(), server.getPortNumber());
-          serverGameInterface = (GameInterface) serverRegistry.lookup(server.getPlayerId());
+          if (newPrimary != null){
+            server = newPrimary;
+            serverRegistry = LocateRegistry.getRegistry(server.getIp(), server.getPortNumber());
+            serverGameInterface = (GameInterface) serverRegistry.lookup(server.getPlayerId());
+          }
+
         }
 
         LOGGER.info(LocalDateTime.now() + " retry to connect to server after 1s: " + server.getPlayerId());
@@ -536,6 +546,11 @@ public class Game implements GameInterface {
   }
 
   @Override
+  public GameState getGameState() throws RemoteException {
+    return gameState;
+  }
+
+  @Override
   public void promoteToBackupServer(GameState gameState) throws RemoteException {
     this.gameState = gameState;
     this.gameState.setBackup(player);
@@ -618,7 +633,10 @@ public class Game implements GameInterface {
       gameState.setPrimary(player);
 
       // find next player as backup
-      promote();
+      synchronized (lock){
+        promote();
+      }
+
     }
 
     private void promote() {
