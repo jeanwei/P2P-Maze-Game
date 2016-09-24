@@ -3,40 +3,44 @@ package com.p2p.maze;
 import javafx.scene.layout.Border;
 
 import java.awt.*;
+import java.util.Scanner;
 import javax.swing.*;
+import java.util.*;
 
 /**
  * Created by CheunPin on 18/9/2016.
  */
 public class MazeGUI extends JFrame{
 
-    private GameState gameState;
     private Player player;
     private JPanel mainPanel;
     private JPanel playerListPanel;
     private JPanel mazePanel;
+    private JList playerList;
+    private JTextField [][] mazeGrid;
 
-    public MazeGUI(Player player) {
+    public MazeGUI(Player player, GameState gameState) {
         this.player = player;
-        initWindow();
-        preparePanel();
+        this.initWindow();
+        this.preparePanel(gameState);
+        this.updateGameState(gameState);
+        setVisible(true);
+        this.pack();
     }
 
-    private void initWindow()
-    {
+    private void initWindow() {
         setTitle("Player: " + this.player.getPlayerId());  // "super" Frame sets its title
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
         setSize(1200, 800);
         int x = (int) ((dimension.getWidth() - getWidth()) / 2);
         int y = (int) ((dimension.getHeight() - getHeight()) / 2);
         setLocation(x, y);
-        setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.mainPanel = new JPanel();
         setContentPane(this.mainPanel);
     }
 
-    private void preparePanel(){
+    private void preparePanel(GameState gameState){
         this.mainPanel.setLayout(new BorderLayout());
         this.playerListPanel = new JPanel();
         this.mazePanel = new JPanel();
@@ -44,25 +48,69 @@ public class MazeGUI extends JFrame{
         this.mainPanel.add(this.mazePanel, BorderLayout.CENTER);
 
         DefaultListModel listModel = new DefaultListModel();
-        listModel.addElement("Jane Doe " + 1);
-        listModel.addElement("John Smith " + 2);
-        listModel.addElement("Kathy Green " + 3);
-
         //Create the list and put it in a scroll pane.
-        JList list = new JList(listModel);
-        list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        JScrollPane listScrollPane = new JScrollPane(list);
+        this.playerList = new JList(listModel);
+        this.playerList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane listScrollPane = new JScrollPane(this.playerList);
         this.playerListPanel.setLayout(new BorderLayout());
         this.playerListPanel.add(listScrollPane, BorderLayout.CENTER);
 
-        this.mazePanel.setLayout(new GridLayout(15, 15));
-        for(int i=0; i<15; i++)
-            for(int j=0; j<15; j++)
-                this.mazePanel.add(new JTextField(i + " " + j));
+        this.mazePanel.setLayout(new GridLayout(gameState.getN(), gameState.getN()));
+        this.mazeGrid = new JTextField[gameState.getN()][gameState.getN()];
+        for(int i=0; i<this.mazeGrid.length; i++) {
+            for (int j = 0; j < this.mazeGrid[i].length; j++) {
+                this.mazeGrid[i][j] = new JTextField(i + " " + j);
+                this.mazePanel.add(this.mazeGrid[i][j]);
+            }
+        }
+    }
+
+    public void updateGameState(GameState gameState){
+        DefaultListModel listModel = (DefaultListModel)this.playerList.getModel();
+        listModel.removeAllElements(); // remove list of players and update latest list of player
+        for(String playerID: gameState.getPlayers().keySet()){
+            listModel.addElement(playerID + " " + gameState.getPlayers().get(playerID).getScore());
+        }
+        String [][] maze = gameState.getMaze();
+        for(int i=0; i<maze.length; i++) {
+            for (int j = 0; j < maze[i].length; j++) {
+                if (maze[i][j] == null) { // empty
+                    this.mazeGrid[i][j].setText("");
+                } else if (gameState.getPrimary() != null &&
+                        maze[i][j].equals(gameState.getPrimary().getPlayerId())) {
+                    this.mazeGrid[i][j].setText(maze[i][j] + " Primary");
+                } else if (gameState.getBackup() != null &&
+                        maze[i][j].equals(gameState.getBackup().getPlayerId())) {
+                    this.mazeGrid[i][j].setText(maze[i][j] + " Backup");
+                } else this.mazeGrid[i][j].setText(maze[i][j]);
+            }
+        }
+        this.mazePanel.repaint();
+        this.playerListPanel.repaint();
+        this.mainPanel.repaint();
+        this.repaint();
     }
 
     public static void main(String [] args) {
-        MazeGUI mazeGUI = new MazeGUI(new Player("P1", "10.30.20.11", 8088));
-        mazeGUI.repaint();
+        Player primary = new Player("P1", "10.30.20.11", 8088);
+        TrackerState trackerState = new TrackerState();
+        trackerState.setPrimary(primary);
+        trackerState.setK(10);
+        trackerState.setN(15);
+        GameState gameState = new GameState(trackerState);
+        gameState.initGameState();
+        gameState.addNewPlayer(primary);
+        MazeGUI mazeGUI = new MazeGUI(primary, gameState);
+        Scanner scanner = new Scanner(System.in);
+        scanner.nextLine();
+        System.out.println("New player P2");
+        Player backupPlayer = new Player("P2", "localhost", 8088);
+        gameState.addNewPlayer(backupPlayer);
+        gameState.setBackup(backupPlayer);
+        mazeGUI.updateGameState(gameState);
+        scanner.nextLine();
+        System.out.println("Moving right");
+        gameState.move(primary, 1, 0);
+        mazeGUI.updateGameState(gameState);
     }
 }
