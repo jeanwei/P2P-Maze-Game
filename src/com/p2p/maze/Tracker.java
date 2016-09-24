@@ -1,9 +1,13 @@
 package com.p2p.maze;
 
+import com.p2p.maze.utils.LogFormatter;
+
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Logger;
 
 /**
  * Tracker
@@ -13,6 +17,8 @@ import java.rmi.server.UnicastRemoteObject;
  * In addition, tracker will inform new players of current Primary and Secondary servers
  */
 public class Tracker implements TrackerInterface {
+
+  private static final Logger LOGGER = Logger.getLogger(Tracker.class.getSimpleName());
 
   private int portNumber;
 
@@ -24,29 +30,20 @@ public class Tracker implements TrackerInterface {
     this.trackerState.setK(k);
   }
 
-  public int getPortNumber() {
-    return portNumber;
-  }
-
+  @Override
   public synchronized TrackerState register(Player player) throws RemoteException {
 
-    System.err.println();
-    System.err.println("register playerId start:" + player.getPlayerId());
-    System.err.println(trackerState.toString());
+    LOGGER.info(String.format("player %s, start: %s", player.getPlayerId(), trackerState));
 
     Player primary = trackerState.getPrimary();
     if (primary == null) {
       trackerState.setPrimary(player);
+
+      LOGGER.info(String.format("player %s, as primary server", player.getPlayerId()));
       return trackerState;
     }
 
-//    Player backup = trackerState.getBackup();
-//    if (backup == null) {
-//      trackerState.setBackup(player);
-//    }
-
-    System.err.println("register playerId end:" + player.getPlayerId());
-    System.err.println(trackerState.toString());
+    LOGGER.info(String.format("player %s, end: %s", player.getPlayerId(), trackerState));
 
     return trackerState;
   }
@@ -55,22 +52,22 @@ public class Tracker implements TrackerInterface {
   public synchronized void updateServers(Player primaryServer, Player backupServer) throws RemoteException {
     trackerState.setPrimary(primaryServer);
     trackerState.setBackup(backupServer);
-    System.err.println();
-    System.err.println("updated track states:");
-    System.err.println(trackerState.toString());
+
+    LOGGER.info(String.format("updated trackerState: %s", trackerState));
   }
 
   @Override
   public synchronized TrackerState getTrackerState() throws RemoteException {
-    System.err.println("retried track states:");
-    System.err.println(trackerState.toString());
+    LOGGER.info(String.format("retried trackerState: %s", trackerState));
+
     return trackerState;
   }
 
   public static void main(String args[]) {
+    initLogger();
 
     if (args.length < 3) {
-      System.err.println("Invalid input to create tracker");
+      LOGGER.warning("Invalid input to create tracker");
       return;
     }
 
@@ -87,13 +84,21 @@ public class Tracker implements TrackerInterface {
       Registry registry = LocateRegistry.getRegistry(serverIP, portNumber);
       registry.rebind("Tracker", stub);
 
-      System.err.println("Tracker Server ready");
-      System.err.println("portNumber: " + portNumber);
-      System.err.println("n: " + n);
-      System.err.println("k: " + k);
+      LOGGER.info(String.format("Tracker ready. port: %d, N: %d, K: %d", portNumber, n, k));
     } catch (RemoteException e) {
-      System.err.println("Server exception: " + e.toString());
+      LOGGER.severe("Server exception: " + e.toString());
       e.printStackTrace();
     }
+  }
+
+  /**
+   * Custom log format
+   */
+  private static void initLogger() {
+    LOGGER.setUseParentHandlers(false);
+    LogFormatter formatter = new LogFormatter();
+    ConsoleHandler handler = new ConsoleHandler();
+    handler.setFormatter(formatter);
+    LOGGER.addHandler(handler);
   }
 }

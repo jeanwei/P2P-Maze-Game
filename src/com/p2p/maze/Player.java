@@ -60,7 +60,7 @@ public class Player implements Serializable {
 
   @Override
   public String toString() {
-    return "Player{" +
+    return "Player { " +
         "playerId='" + playerId + '\'' +
         ", ip='" + ip + '\'' +
         ", portNumber=" + portNumber +

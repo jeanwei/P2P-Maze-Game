@@ -1,16 +1,19 @@
 package com.p2p.maze;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.logging.Logger;
 
 /**
  * GameState map - Game State
  *
  */
 public class GameState extends TrackerState {
+
+  private static final Logger LOGGER = Logger.getLogger(GameState.class.getSimpleName());
+
   private final String TREASURE_VALUE = "*";
   private String[][] maze;
 
@@ -45,11 +48,11 @@ public class GameState extends TrackerState {
       remove(oldPlayer.getPosition().posX, oldPlayer.getPosition().posY);
     }
     this.playerMap.put(newPlayer.getPlayerId(), newPlayer);
-    System.out.println(LocalDateTime.now() + " adding new player " + newPlayer.getPlayerId());
-    while(!this.add(random.nextInt(n), random.nextInt(n), newPlayer)){
 
+    while(!this.add(random.nextInt(n), random.nextInt(n), newPlayer)){
+      LOGGER.fine("trying to add new player: " + newPlayer.getPlayerId());
     }
-    System.out.println(LocalDateTime.now() + " added new player " + newPlayer.getPlayerId());
+    LOGGER.info("added new player " + newPlayer.getPlayerId());
   }
 
   private synchronized boolean addTreasure(int newPositionX, int newPositionY) {
@@ -83,21 +86,20 @@ public class GameState extends TrackerState {
     score++;
     player.setScore(score);
     // only if player size and K smaller than size of map
-    if((this.playerMap.keySet().size() + this.k) <= this.n * this.n)
-    {
+    if((this.playerMap.keySet().size() + this.k) <= this.n * this.n) {
       Random random = new Random();
-      System.out.println(LocalDateTime.now() + " adding Treasure " + player.getPlayerId());
-      while(!this.addTreasure(random.nextInt(n), random.nextInt(n))){
 
+      while(!this.addTreasure(random.nextInt(n), random.nextInt(n))){
+        LOGGER.fine("Trying to add a new Treasure");
       }
-      System.out.println(LocalDateTime.now() + " added Treasure " + player.getPlayerId());
+      LOGGER.info("Added Treasure");
     }
     this.remove(positionX, positionY);
   }
 
   private synchronized boolean add(int newPositionX, int newPositionY, Player player) {
     String playerID =  player.getPlayerId();
-    if(maze[newPositionX][newPositionY] != null){
+      if (maze[newPositionX][newPositionY] != null) {
       if (TREASURE_VALUE.equals(maze[newPositionX][newPositionY])){
         collectTreasureAndUpdateScore(player, newPositionX, newPositionY);
       } else {
@@ -121,7 +123,7 @@ public class GameState extends TrackerState {
     this.remove(player.getPosition().posX, player.getPosition().posY);
     this.playerMap.remove(playerId);
     Player backupServer = getBackup();
-    if (backupServer != null && backupServer.getPlayerId().equals(playerId)){
+    if (backupServer != null && backupServer.getPlayerId().equals(playerId)) {
       setBackup(null);
     }
     return true;
@@ -147,7 +149,7 @@ public class GameState extends TrackerState {
 
   @Override
   public String toString() {
-    StringBuffer stringBuffer = new StringBuffer();
+    StringBuilder stringBuffer = new StringBuilder();
     stringBuffer.append("GameState{" +
         "n=" + n +
         ", k=" + k +
@@ -160,7 +162,7 @@ public class GameState extends TrackerState {
     stringBuffer.append(newLineStr);
     stringBuffer.append("maze=" + newLineStr);
     int index;
-    if (maze == null){
+    if (maze == null) {
       stringBuffer.append("null");
     } else {
       for(int i = 0; i < n+1; i++){
