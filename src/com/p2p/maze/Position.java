@@ -10,8 +10,7 @@ public class Position implements Serializable {
   public int posX;
   public int posY;
 
-  public Position() {
-  }
+  public Position() {}
 
   public Position(int newPosX, int newPosY) {
     this.posX = newPosX;
@@ -20,9 +19,6 @@ public class Position implements Serializable {
 
   @Override
   public String toString() {
-    return "Position{" +
-        "posX=" + posX +
-        ", posY=" + posY +
-        '}';
+    return String.format("[%d, %d]", posX, posY);
   }
 }

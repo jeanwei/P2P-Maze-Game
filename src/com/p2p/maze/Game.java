@@ -104,7 +104,7 @@ public class Game implements GameInterface {
 
     if (isPrimary()) {
       gameState.initGameState();
-      gameState.addNewPlayer(player);
+      gameState.addPlayer(player);
       updatePlayer();
     } else if (server != null) {
 
@@ -176,7 +176,7 @@ public class Game implements GameInterface {
       LOGGER.warning(String.format("RETRY: connect to server %s after 400ms", server.getPlayerId()));
       Thread.sleep(400); // sleep for 400ms and try again
 
-    } // while loop only stops when successfully add new player inside the map
+    } // while loop only stops when successfully add new player
     return true;
   }
 
@@ -187,8 +187,7 @@ public class Game implements GameInterface {
   }
 
   private void refreshGameStateUI(){
-//    LOGGER.info("game state after refreshing: " + gameState);
-    LOGGER.info("player after refreshing: " + player.toString());
+    LOGGER.info("player after refreshing: " + player);
     this.gui.updateGameState(this.gameState);
   }
 
@@ -202,16 +201,11 @@ public class Game implements GameInterface {
 
   private synchronized void run() {
 
-    LOGGER.info(String.format("Player %s is playing", player.getPlayerId()));
+    LOGGER.info(String.format("Player %s is running --------------------------------------------", player.getPlayerId()));
 
-    // if player is primary/backup server, it needs to ping every 2 sec
-//    startKeepAlive();
-    if (isBackup()){
-      LOGGER.info("registered as back up");
-      LOGGER.info("start backup -> primary timer");
-      Timer timer = new Timer();
-      timer.schedule(new KeepAliveTask(), 0, 1000);
-      timerStarted = true;
+    if (isBackup()) {
+      LOGGER.info(String.format("start backup -> primary timer after %s has registered as backup", player.getPlayerId()));
+      startKeepAliveTimer();
     }
 
     Scanner scanner = new Scanner(System.in);
@@ -338,6 +332,37 @@ public class Game implements GameInterface {
     }
   }
 
+  private void notifyBackup() throws RemoteException, NotBoundException {
+    if (!isPrimary()) {
+      LOGGER.warning("Only primary server needs notify backup server on game change");
+      return;
+    }
+
+    Player backupServer = gameState.getBackup();
+    if (backupServer != null && !backupServer.getPlayerId().equals(player.getPlayerId())) {
+      LOGGER.info("Notify backup: "+ backupServer.getPlayerId());
+
+      try{
+        Registry backupRegistry = LocateRegistry.getRegistry(backupServer.getIp(), backupServer.getPortNumber());
+        GameInterface stub = (GameInterface) backupRegistry.lookup(backupServer.getPlayerId());
+        stub.syncGameState(gameState);
+      } catch (Exception e){
+        LOGGER.severe(String.format("notifyBackup error: %s", e.toString()));
+      }
+    }
+  }
+
+  private void notifyTracker() {
+    try {
+      TrackerInterface stub = (TrackerInterface) trackerRegistry.lookup("Tracker");
+      stub.updateServers(gameState.getPrimary(), gameState.getBackup());
+      LOGGER.info(String.format("Notify Tracker | primary: %s, backup: %s", gameState.getPrimary(), gameState.getBackup()));
+
+    } catch (RemoteException | NotBoundException e) {
+      LOGGER.severe("Update tracker failed!");
+    }
+  }
+
   public static void main(String[] args) {
     initLogger();
 
@@ -407,21 +432,11 @@ public class Game implements GameInterface {
   }
 
   @Override
-  public void setPrimary(Player primary) throws RemoteException {
-     gameState.primary = primary;
-  }
-
-  @Override
-  public void setBackup(String backup) throws RemoteException {
-
-  }
-
-  @Override
   public GameState initPlayer(Player player) throws RemoteException, NotBoundException {
-    synchronized (lock){
-      gameState.addNewPlayer(player);
+    synchronized (lock) {
+      gameState.addPlayer(player);
       Player backupServer = gameState.getBackup();
-      if (backupServer == null){
+      if (backupServer == null) {
         boolean found = false;
         for (String id : gameState.getPlayers().keySet()) {
 
@@ -442,27 +457,26 @@ public class Game implements GameInterface {
             break;
 
           } catch (RemoteException | NotBoundException e) {
-            LOGGER.severe("Unable to promote player: " + next.getPlayerId());
+            LOGGER.severe("Unable to internalPromote player: " + next.getPlayerId());
           }
         }
 
-        if (!found){
+        if (!found) {
           gameState.setBackup(player);
         }
 
         LOGGER.info("found a backup: " + gameState.getBackup().getPlayerId());
-        LOGGER.info("start primary -> backup timer");
-        if (!timerStarted){
-          Timer timer = new Timer();
-          timer.schedule(new KeepAliveTask(), 0, 1000);
+
+        if (!timerStarted) {
+          // when primary find a new backup, it should then start timer
+          startKeepAliveTimer();
+          LOGGER.info(String.format("Primary %s timer started", player.getPlayerId()));
         }
 
-        timerStarted = true;
-        LOGGER.info("timer started: " + player.getPlayerId());
-
-      } else if (!player.getPlayerId().equals(backupServer.getPlayerId())){
+      } else if (!player.getPlayerId().equals(backupServer.getPlayerId())) {
         notifyBackup();
       }
+
       refreshGameStateUI();
     }
 
@@ -489,11 +503,11 @@ public class Game implements GameInterface {
         break;
 
       case MOVE_NORTH:
-        updated =  gameState.move(player, 0, -1);
+        updated = gameState.move(player, 0, -1);
         break;
 
       case EXIT:
-        updated =  gameState.exitPlayer(player);
+        updated = gameState.exitPlayer(player);
         break;
 
       default:
@@ -504,37 +518,6 @@ public class Game implements GameInterface {
       notifyBackup();
     }
     return gameState;
-  }
-
-  private void notifyBackup() throws RemoteException, NotBoundException {
-    if (!isPrimary()) {
-      LOGGER.warning("Only primary server needs notify backup server on game change");
-      return;
-    }
-
-    Player backupServer = gameState.getBackup();
-    if (backupServer != null && !backupServer.getPlayerId().equals(player.getPlayerId())) {
-      LOGGER.info("Notify backup: "+ backupServer.getPlayerId());
-
-      try{
-        Registry backupRegistry = LocateRegistry.getRegistry(backupServer.getIp(), backupServer.getPortNumber());
-        GameInterface stub = (GameInterface) backupRegistry.lookup(backupServer.getPlayerId());
-        stub.syncGameState(gameState);
-      } catch (Exception e){
-        LOGGER.severe(String.format("notifyBackup error: %s", e.toString()));
-      }
-    }
-  }
-
-  private void notifyTracker() {
-    try {
-      TrackerInterface stub = (TrackerInterface) trackerRegistry.lookup("Tracker");
-      stub.updateServers(gameState.getPrimary(), gameState.getBackup());
-      LOGGER.info(String.format("Notify Tracker | primary: %s, backup: %s", gameState.getPrimary(), gameState.getBackup()));
-
-    } catch (RemoteException | NotBoundException e) {
-      LOGGER.severe("Update tracker failed!");
-    }
   }
 
   @Override
@@ -559,18 +542,19 @@ public class Game implements GameInterface {
     this.gameState.setBackup(player);
     LOGGER.info("promoted to new back up");
     LOGGER.info("start backup -> primary timer");
+    startKeepAliveTimer();
+  }
+
+  @Override
+  public void setPrimary(Player primary) throws RemoteException {
+    gameState.primary = primary;
+  }
+
+  private void startKeepAliveTimer() {
+    LOGGER.info("startKeepAliveTimer");
     Timer timer = new Timer();
     timer.schedule(new KeepAliveTask(), 0, 1000);
     timerStarted = true;
-//    startKeepAlive();
-  }
-
-  private void startKeepAlive() {
-    if (isPrimary() || isBackup()) {
-      LOGGER.info("startKeepAlive");
-      Timer timer = new Timer();
-      timer.schedule(new KeepAliveTask(), 0, 1000);
-    }
   }
 
   private class KeepAliveTask extends TimerTask {
@@ -587,7 +571,7 @@ public class Game implements GameInterface {
           LOGGER.info("Ping primary->backup : " + backup.getPlayerId());
 
         } catch (RemoteException | NotBoundException e) {
-          LOGGER.warning("Ping primary->backup failed! Trying to promote new backup server now.");
+          LOGGER.warning("Ping primary->backup failed! Trying to internalPromote new backup server now.");
           handleBackupServerDown(backup);
         }
       } else if (isBackup()) {
@@ -604,78 +588,83 @@ public class Game implements GameInterface {
           LOGGER.info("Ping backup->primary : " + primary.getPlayerId());
 
         } catch (RemoteException | NotBoundException e) {
-          LOGGER.warning(String.format("Ping backup->primary failed! Trying to promote %s first.", player.getPlayerId()));
+          LOGGER.warning(String.format("Ping backup->primary failed! Trying to internalPromote %s first.", player.getPlayerId()));
           handlePrimaryServerDown();
         }
       }
-
     }
 
     private void handleBackupServerDown(Player oldBackup) {
 
       synchronized (lock){
         Player backup = gameState.getBackup();
-        if (backup != null && backup.getPlayerId().equals(oldBackup.getPlayerId())){
-          // remove current backup from player list
-          LOGGER.warning("backup down : " + oldBackup.getPlayerId());
+        if (backup != null && backup.getPlayerId().equals(oldBackup.getPlayerId())){          
+          LOGGER.warning(String.format("%s remove current backup from player list: %s", player.getPlayerId(),
+              gameState.getBackup().getPlayerId()));
+      
           gameState.exitPlayer(oldBackup);
           gameState.setBackup(null);
 
           // promote next player to backup
-          promote();
+          internalPromote();
         }
       }
     }
 
-
     private void handlePrimaryServerDown() {
-      LOGGER.info("primary down, self " + player.getPlayerId() + "  as primary");
-
+      LOGGER.info(String.format("%s remove current primary from player list: %s", player.getPlayerId(),
+              gameState.getPrimary().getPlayerId()));
+              
       synchronized (lock){
         // remove backup from player list
         if (!isPrimary()){
           gameState.exitPlayer(gameState.getPrimary());
-          gameState.setBackup(null);
 
-          // promote self to primary
+          LOGGER.info("promote self to primary and set backup to null");     
           gameState.setPrimary(player);
-
-          // find next player as backup
-          promote();
+          gameState.setBackup(null);
+          internalPromote();
         } else {
           LOGGER.info("promoted as " + player.getPlayerId() + "  as primary");
         }
 
       }
-
     }
 
-    private void promote() {
+    // promote next available player to backup server and broadcast new servers to other players
+    private void internalPromote() {
       List<Player> removeList = new ArrayList<>();
+
+      LOGGER.info("player size before promotion: " + gameState.getPlayers().keySet().size());
 
       boolean found = false;
       for (String id : gameState.getPlayers().keySet()) {
-
         if (id.equals(gameState.getPrimary().getPlayerId())) {
           continue;
         }
-        LOGGER.info("promoting: " + id + " as new backup");
-        LOGGER.info("current player size: " + gameState.getPlayers().keySet().size());
 
         Player next = gameState.getPlayers().get(id);
         try {
-          if (!found){
+          if (!found) {
+            LOGGER.info(String.format("internalPromote %s as new backup | start", id));
+
             Registry registry = LocateRegistry.getRegistry(next.getIp(), next.getPortNumber());
             GameInterface stub = (GameInterface) registry.lookup(next.getPlayerId());
             stub.promoteToBackupServer(gameState);
             gameState.setBackup(next); // set only after promoteToBackupServer is successful
-            LOGGER.info("promoted: " + id + " as new backup");
-            found = true;
+
+            LOGGER.info(String.format("internalPromote %s as new backup | start", id));
+
+            found = true; // once set to true, start broadcasting changes to other players
+
           } else {
+            LOGGER.info(String.format("Notify player %s about new primary | start", id));
+
             Registry registry = LocateRegistry.getRegistry(next.getIp(), next.getPortNumber());
             GameInterface stub = (GameInterface) registry.lookup(next.getPlayerId());
             stub.setPrimary(gameState.getPrimary());
-            LOGGER.info("update primary for : " + id);
+
+            LOGGER.info(String.format("Notify player %s about new primary | end", id));
           }
 
         } catch (RemoteException | NotBoundException e) {
@@ -688,9 +677,9 @@ public class Game implements GameInterface {
         gameState.exitPlayer(player);
       }
 
-      notifyTracker();
+      LOGGER.info("player size after promotion: " + gameState.getPlayers().keySet().size());
 
-      // TODO: notify all the players
+      notifyTracker();
     }
   }
 }

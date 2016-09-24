@@ -1,14 +1,11 @@
 package com.p2p.maze;
 
-import javafx.scene.layout.Border;
-
+import javax.swing.*;
 import java.awt.*;
 import java.util.Scanner;
-import javax.swing.*;
-import java.util.*;
 
 /**
- * Created by CheunPin on 18/9/2016.
+ * Maze Game User Interface
  */
 public class MazeGUI extends JFrame{
 
@@ -99,13 +96,13 @@ public class MazeGUI extends JFrame{
         trackerState.setN(15);
         GameState gameState = new GameState(trackerState);
         gameState.initGameState();
-        gameState.addNewPlayer(primary);
+        gameState.addPlayer(primary);
         MazeGUI mazeGUI = new MazeGUI(primary, gameState);
         Scanner scanner = new Scanner(System.in);
         scanner.nextLine();
         System.out.println("New player P2");
         Player backupPlayer = new Player("P2", "localhost", 8088);
-        gameState.addNewPlayer(backupPlayer);
+        gameState.addPlayer(backupPlayer);
         gameState.setBackup(backupPlayer);
         mazeGUI.updateGameState(gameState);
         scanner.nextLine();

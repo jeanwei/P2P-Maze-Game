@@ -9,11 +9,6 @@ import java.rmi.RemoteException;
  *
  */
 public interface GameInterface extends Remote {
-
-  public void setPrimary(Player primary) throws RemoteException;
-
-  public void setBackup(String backup) throws RemoteException;
-
   /**
    * [Primary] Inform primary server the new player
    * if primary does not contain backup server, this player will be promoted
@@ -46,11 +41,19 @@ public interface GameInterface extends Remote {
   public boolean syncGameState(GameState gameState) throws RemoteException;
 
   /**
-   * [Primary -> Backup] Promote new backup server when old one exit
+   * [Primary -> new player] Promote new backup server when old one exit
    *
    * @param gameState game state
    */
   public void promoteToBackupServer(GameState gameState) throws RemoteException;
+
+  /**
+   * [Primary -> player] Notify player about new primary (broadcast)
+   * @param primary new primary
+   * @throws RemoteException
+     */
+  public void setPrimary(Player primary) throws RemoteException;
+
 
   public GameState getGameState() throws RemoteException;
 }

@@ -14,10 +14,10 @@ public class GameState extends TrackerState {
 
   private static final Logger LOGGER = Logger.getLogger(GameState.class.getSimpleName());
 
-  private final String TREASURE_VALUE = "*";
+  private static final String TREASURE_VALUE = "*";
+
   private String[][] maze;
 
-  // storing list of player
   private Map<String, Player> playerMap;
 
   public GameState(TrackerState trackerState){
@@ -27,57 +27,56 @@ public class GameState extends TrackerState {
     this.backup = trackerState.getBackup();
   }
 
-  public void initGameState(){
+  public void initGameState() {
     this.maze = new String[n][n];
     this.playerMap = new HashMap<>();
     Random random = new Random();
     for(int i = 0; i < k; i++){
-      if(!this.addTreasure(random.nextInt(n), random.nextInt(n))){
+      if(!this.addTreasureInMaze(random.nextInt(n), random.nextInt(n))){
         i--;
       }
     }
   }
 
-  public synchronized void addNewPlayer(Player newPlayer) {
+  public synchronized void addPlayer(Player newPlayer) {
     Random random = new Random();
-    if(this.playerMap.keySet().size() >= this.n * this.n)
-      return;
 
+    if (this.playerMap.keySet().size() >= this.n * this.n) {
+      LOGGER.warning("Too many players!");
+      return;
+    }
+
+    // handle scenario: new player has same ID as an old dead player
     Player oldPlayer = playerMap.get(newPlayer.getPlayerId());
     if (oldPlayer != null){
-      remove(oldPlayer.getPosition().posX, oldPlayer.getPosition().posY);
+      removeInMaze(oldPlayer.getPosition().posX, oldPlayer.getPosition().posY);
     }
     this.playerMap.put(newPlayer.getPlayerId(), newPlayer);
 
     while(!this.add(random.nextInt(n), random.nextInt(n), newPlayer)){
       LOGGER.fine("trying to add new player: " + newPlayer.getPlayerId());
     }
+
     LOGGER.info("added new player " + newPlayer.getPlayerId());
   }
 
-  private synchronized boolean addTreasure(int newPositionX, int newPositionY) {
-    if(maze[newPositionY][newPositionX] != null){
-      return false;
-    } else {
-      maze[newPositionY][newPositionX] = TREASURE_VALUE;
-    }
-    return true;
-  }
-
-  public synchronized boolean move(Player player,  int horizontal, int vertical) {
+  public synchronized boolean move(Player player, int x, int y) {
     String playerID = player.getPlayerId();
     player = this.playerMap.get(playerID);
     int oldPositionX = player.getPosition().posX;
     int oldPositionY = player.getPosition().posY;
-    int newPositionX = player.getPosition().posX + horizontal;
-    int newPositionY = player.getPosition().posY + vertical;
-    if(newPositionX < 0 || newPositionX > n-1
-        || newPositionY < 0 || newPositionY > n-1)
+    int newPositionX = player.getPosition().posX + x;
+    int newPositionY = player.getPosition().posY + y;
+
+    if(newPositionX < 0 || newPositionX > n-1 || newPositionY < 0 || newPositionY > n-1) {
       return false;
-    if(this.add(newPositionX, newPositionY, player)){
-      this.remove(oldPositionX, oldPositionY);
+    }
+
+    if (this.add(newPositionX, newPositionY, player)) {
+      removeInMaze(oldPositionX, oldPositionY);
       return true;
     }
+
     return false;
   }
 
@@ -85,21 +84,22 @@ public class GameState extends TrackerState {
     Integer score = player.getScore();
     score++;
     player.setScore(score);
+
     // only if player size and K smaller than size of map
     if((this.playerMap.keySet().size() + this.k) <= this.n * this.n) {
       Random random = new Random();
 
-      while(!this.addTreasure(random.nextInt(n), random.nextInt(n))){
+      while(!this.addTreasureInMaze(random.nextInt(n), random.nextInt(n))){
         LOGGER.fine("Trying to add a new Treasure");
       }
       LOGGER.info("Added Treasure");
     }
-    this.remove(positionX, positionY);
+    this.removeInMaze(positionX, positionY);
   }
 
   private synchronized boolean add(int newPositionX, int newPositionY, Player player) {
     String playerID =  player.getPlayerId();
-      if (maze[newPositionY][newPositionX] != null) {
+    if (maze[newPositionY][newPositionX] != null) {
       if (TREASURE_VALUE.equals(maze[newPositionY][newPositionX])){
         collectTreasureAndUpdateScore(player, newPositionX, newPositionY);
       } else {
@@ -113,14 +113,24 @@ public class GameState extends TrackerState {
     return true;
   }
 
-  private void remove(int oldPositionX , int oldPositionY) {
+  private void removeInMaze(int oldPositionX , int oldPositionY) {
     maze[oldPositionY][oldPositionX] = null;
+  }
+
+  private synchronized boolean addTreasureInMaze(int newPositionX, int newPositionY) {
+    if(maze[newPositionX][newPositionY] != null){
+      return false;
+    } else {
+      maze[newPositionX][newPositionY] = TREASURE_VALUE;
+    }
+    return true;
   }
 
   public synchronized boolean exitPlayer(Player player){
     String playerId = player.getPlayerId();
     player = this.playerMap.get(playerId);
-    this.remove(player.getPosition().posX, player.getPosition().posY);
+    removeInMaze(player.getPosition().posX, player.getPosition().posY);
+
     this.playerMap.remove(playerId);
     Player backupServer = getBackup();
     if (backupServer != null && backupServer.getPlayerId().equals(playerId)) {
@@ -167,35 +177,24 @@ public class GameState extends TrackerState {
     if (maze == null) {
       stringBuffer.append("null");
     } else {
-      for(int i = 0; i < n+1; i++){
-
-        for(int j = 0; j<n+1; j++){
-          if (j==0 && i ==0){
+      for (int row = 0; row < n + 1; row++) {
+        for (int col = 0; col < n + 1; col++) {
+          if (col == 0 && row == 0) {
             stringBuffer.append("    ");
             continue;
-          } else if (i == 0){
-            index = j - 1;
-            if (index <10){
-              stringBuffer.append("0"+(j-1) + "  ");
-            } else {
-              stringBuffer.append((j-1) + "   ");
-            }
-
+          } else if (row == 0) {
+            stringBuffer.append(getIndex(col - 1));
             continue;
-          } else if (j == 0){
-            index = i - 1;
-            if (index <10){
-              stringBuffer.append("0"+index + "  ");
-            } else {
-              stringBuffer.append(index + "   ");
-            }
 
+          } else if (col == 0) {
+            stringBuffer.append(getIndex(row - 1));
             continue;
           }
-          String value = maze[i-1][j-1];
-          if (TREASURE_VALUE.equals(value)){
+
+          String value = maze[row - 1][col - 1];
+          if (TREASURE_VALUE.equals(value)) {
             stringBuffer.append(TREASURE_VALUE + "   ");
-          } else if (value != null){
+          } else if (value != null) {
             stringBuffer.append(value + "  ");
           } else {
             stringBuffer.append("    ");
@@ -206,5 +205,13 @@ public class GameState extends TrackerState {
     }
 
     return stringBuffer.toString();
+  }
+
+  private String getIndex(int index) {
+    if (index < 10) {
+      return "0" + index + "  ";
+    } else {
+      return index + "   ";
+    }
   }
 }
