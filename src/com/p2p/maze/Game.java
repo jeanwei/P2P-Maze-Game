@@ -188,7 +188,9 @@ public class Game implements GameInterface {
 
   private void refreshGameStateUI(){
     LOGGER.info("player after refreshing: " + player);
-    this.gui.updateGameState(this.gameState);
+    if(this.gui != null){
+      this.gui.updateGameState(this.gameState);
+    }
   }
 
   /**
@@ -463,10 +465,10 @@ public class Game implements GameInterface {
           }
         }
 
-        if (!found) {
+        if (!found) { // set new player
           gameState.setBackup(player);
         }
-
+        notifyTracker();
         LOGGER.info("found a backup: " + gameState.getBackup().getPlayerId());
 
         if (!timerStarted) {
