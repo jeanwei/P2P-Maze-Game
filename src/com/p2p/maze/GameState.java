@@ -137,6 +137,8 @@ public class GameState extends TrackerState {
     return this.playerMap;
   }
 
+  public String [][] getMaze() { return this.maze; }
+
   public String getPlayerInfo(){
      return "GameState{" +
          "n=" + n +
