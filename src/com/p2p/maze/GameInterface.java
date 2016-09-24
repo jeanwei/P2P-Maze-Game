@@ -52,7 +52,7 @@ public interface GameInterface extends Remote {
    * @param primary new primary
    * @throws RemoteException
      */
-  public void setPrimary(Player primary) throws RemoteException;
+  public void setPrimary(Player primary, Player backup) throws RemoteException;
 
 
   public GameState getGameState() throws RemoteException;

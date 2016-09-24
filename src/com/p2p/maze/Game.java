@@ -230,7 +230,9 @@ public class Game implements GameInterface {
 
       if (isPrimary()){
         try{
-          play(commandChar);
+          synchronized (lock){
+            play(commandChar);
+          }
         } catch (RemoteException | NotBoundException e) {
           LOGGER.severe("server play error: " + e.toString());
         }
@@ -243,7 +245,7 @@ public class Game implements GameInterface {
 
         } catch (RemoteException | NotBoundException e) {
           LOGGER.severe("primary connectToServerAndPlay error : " + gameState.getPlayerInfo());
-          e.printStackTrace();
+          //e.printStackTrace();
 
           primaryNotFound = true;
         }
@@ -546,8 +548,9 @@ public class Game implements GameInterface {
   }
 
   @Override
-  public void setPrimary(Player primary) throws RemoteException {
-    gameState.primary = primary;
+  public void setPrimary(Player primary, Player backup) throws RemoteException {
+    gameState.setPrimary(primary);
+    gameState.setBackup(backup);
   }
 
   private void startKeepAliveTimer() {
@@ -658,13 +661,13 @@ public class Game implements GameInterface {
             found = true; // once set to true, start broadcasting changes to other players
 
           } else {
-            LOGGER.info(String.format("Notify player %s about new primary | start", id));
+            LOGGER.info(String.format("Notify player %s about new backup | start", id));
 
             Registry registry = LocateRegistry.getRegistry(next.getIp(), next.getPortNumber());
             GameInterface stub = (GameInterface) registry.lookup(next.getPlayerId());
-            stub.setPrimary(gameState.getPrimary());
+            stub.setPrimary(gameState.getPrimary(), gameState.getBackup());
 
-            LOGGER.info(String.format("Notify player %s about new primary | end", id));
+            LOGGER.info(String.format("Notify player %s about new backup | end", id));
           }
 
         } catch (RemoteException | NotBoundException e) {
