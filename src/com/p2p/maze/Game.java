@@ -574,7 +574,7 @@ public class Game implements GameInterface {
   }
 
   private class KeepAliveTask extends TimerTask {
-    public void run() {
+    public synchronized void run() {
       if (isPrimary()) {
         Player backup = gameState.getBackup();
         if (backup == null) {
@@ -588,7 +588,7 @@ public class Game implements GameInterface {
 
         } catch (RemoteException | NotBoundException e) {
           LOGGER.warning("Ping primary->backup failed! Trying to promote new backup server now.");
-          handleBackupServerDown();
+          handleBackupServerDown(backup);
         }
       } else if (isBackup()) {
         Player primary = gameState.getPrimary();
@@ -611,33 +611,41 @@ public class Game implements GameInterface {
 
     }
 
-    private void handleBackupServerDown() {
-      // remove current backup from player list
-      if (gameState.getBackup() != null){
-        LOGGER.warning("backup down : " + gameState.getBackup().getPlayerId());
-      }
-      gameState.exitPlayer(gameState.getBackup());
-      gameState.setBackup(null);
+    private void handleBackupServerDown(Player oldBackup) {
 
-      // promote next player to backup
       synchronized (lock){
-        promote();
+        Player backup = gameState.getBackup();
+        if (backup != null && backup.getPlayerId().equals(oldBackup.getPlayerId())){
+          // remove current backup from player list
+          LOGGER.warning("backup down : " + oldBackup.getPlayerId());
+          gameState.exitPlayer(oldBackup);
+          gameState.setBackup(null);
+
+          // promote next player to backup
+          promote();
+        }
       }
     }
 
 
     private void handlePrimaryServerDown() {
       LOGGER.info("primary down, self " + player.getPlayerId() + "  as primary");
-      // remove backup from player list
-      gameState.exitPlayer(gameState.getPrimary());
-      gameState.setBackup(null);
 
-      // promote self to primary
-      gameState.setPrimary(player);
-
-      // find next player as backup
       synchronized (lock){
-        promote();
+        // remove backup from player list
+        if (!isPrimary()){
+          gameState.exitPlayer(gameState.getPrimary());
+          gameState.setBackup(null);
+
+          // promote self to primary
+          gameState.setPrimary(player);
+
+          // find next player as backup
+          promote();
+        } else {
+          LOGGER.info("promoted as " + player.getPlayerId() + "  as primary");
+        }
+
       }
 
     }
