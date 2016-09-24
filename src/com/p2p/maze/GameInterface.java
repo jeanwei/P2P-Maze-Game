@@ -10,7 +10,7 @@ import java.rmi.RemoteException;
  */
 public interface GameInterface extends Remote {
 
-  public void setPrimary(String primary) throws RemoteException;
+  public void setPrimary(Player primary) throws RemoteException;
 
   public void setBackup(String backup) throws RemoteException;
 

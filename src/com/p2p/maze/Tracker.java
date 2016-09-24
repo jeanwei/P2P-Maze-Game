@@ -28,9 +28,10 @@ public class Tracker implements TrackerInterface {
     return portNumber;
   }
 
-  public TrackerState register(Player player) throws RemoteException {
+  public synchronized TrackerState register(Player player) throws RemoteException {
 
-    System.err.println("register playerId start:" + player);
+    System.err.println();
+    System.err.println("register playerId start:" + player.getPlayerId());
     System.err.println(trackerState.toString());
 
     Player primary = trackerState.getPrimary();
@@ -39,25 +40,30 @@ public class Tracker implements TrackerInterface {
       return trackerState;
     }
 
-    Player backup = trackerState.getBackup();
-    if (backup == null) {
-      trackerState.setBackup(player);
-    }
+//    Player backup = trackerState.getBackup();
+//    if (backup == null) {
+//      trackerState.setBackup(player);
+//    }
 
-    System.err.println("register playerId end:" + player);
+    System.err.println("register playerId end:" + player.getPlayerId());
     System.err.println(trackerState.toString());
 
     return trackerState;
   }
 
   @Override
-  public void updateServers(Player primaryServer, Player backupServer) throws RemoteException {
+  public synchronized void updateServers(Player primaryServer, Player backupServer) throws RemoteException {
     trackerState.setPrimary(primaryServer);
     trackerState.setBackup(backupServer);
+    System.err.println();
+    System.err.println("updated track states:");
+    System.err.println(trackerState.toString());
   }
 
   @Override
-  public TrackerState getTrackerState() throws RemoteException {
+  public synchronized TrackerState getTrackerState() throws RemoteException {
+    System.err.println("retried track states:");
+    System.err.println(trackerState.toString());
     return trackerState;
   }
 
