@@ -102,7 +102,7 @@ public class Game implements GameInterface {
 
     if (isPrimary()) {
       gameState.initGameState();
-      gameState.addNewPlayer(player);
+      gameState.addPlayer(player);
       updatePlayer();
     } else if (server != null) {
 
@@ -422,7 +422,7 @@ public class Game implements GameInterface {
   @Override
   public GameState initPlayer(Player player) throws RemoteException, NotBoundException {
     synchronized (lock) {
-      gameState.addNewPlayer(player);
+      gameState.addPlayer(player);
       Player backupServer = gameState.getBackup();
       if (backupServer == null) {
         boolean found = false;
@@ -479,23 +479,23 @@ public class Game implements GameInterface {
         break;
 
       case MOVE_WEST:
-        updated = gameState.move(player, 0, -1);
+        updated = gameState.move(player, -1, 0);
         break;
 
       case MOVE_SOUTH:
-        updated = gameState.move(player, 1, 0);
-        break;
-
-      case MOVE_EAST:
         updated = gameState.move(player, 0, 1);
         break;
 
+      case MOVE_EAST:
+        updated = gameState.move(player, 1, 0);
+        break;
+
       case MOVE_NORTH:
-        updated =  gameState.move(player, -1, 0);
+        updated = gameState.move(player, 0, 1);
         break;
 
       case EXIT:
-        updated =  gameState.exitPlayer(player);
+        updated = gameState.exitPlayer(player);
         break;
 
       default:
