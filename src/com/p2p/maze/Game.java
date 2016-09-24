@@ -33,6 +33,8 @@ public class Game implements GameInterface {
 
   private final Object lock = new Object();
 
+  private MazeGUI gui;
+
   public enum Command {
     GAME_STATE(0),
     MOVE_WEST(1),
@@ -127,18 +129,28 @@ public class Game implements GameInterface {
           }
         } catch (Exception e) {
           LOGGER.severe("initial connection error");
+          LOGGER.warning("currentG GameState: " + gameState);
+          Player backup = gameState.getBackup();
 
-          TrackerInterface stub = (TrackerInterface) trackerRegistry.lookup("Tracker");
-          TrackerState trackerState = stub.getTrackerState();
-          gameState = new GameState(trackerState);
-          gameState.setBackup(trackerState.getBackup());
+          Player newPrimary = null;
+
+          if (backup != null){
+            Registry backupServerRegistry  = LocateRegistry.getRegistry(backup.getIp(), backup.getPortNumber());
+            GameInterface backupServerGameInterface = (GameInterface) backupServerRegistry.lookup(backup.getPlayerId());
+            GameState backupGameSate= backupServerGameInterface.getGameState();
+            newPrimary = backupGameSate.getPrimary();
+            gameState.setPrimary(newPrimary);
+            gameState.setBackup(backupGameSate.getBackup());
+          }
 
           LOGGER.warning("contactTracker reconnected GameState: " + gameState);
 
-          // TODO: this could cause further exception!!
-          server = gameState.getPrimary();
-          serverRegistry = LocateRegistry.getRegistry(server.getIp(), server.getPortNumber());
-          serverGameInterface = (GameInterface) serverRegistry.lookup(server.getPlayerId());
+          if (newPrimary != null){
+            server = newPrimary;
+            serverRegistry = LocateRegistry.getRegistry(server.getIp(), server.getPortNumber());
+            serverGameInterface = (GameInterface) serverRegistry.lookup(server.getPlayerId());
+          }
+
         }
 
         LOGGER.info(LocalDateTime.now() + " retry to connect to server after 1s: " + server.getPlayerId());
@@ -149,7 +161,7 @@ public class Game implements GameInterface {
     } else {
       LOGGER.warning("Primary server not found!");
     }
-
+    this.gui = new MazeGUI(this.player, this.gameState);
     LOGGER.info("game state after init: " + gameState);
     LOGGER.info("player after init: " + player);
   }
@@ -175,8 +187,8 @@ public class Game implements GameInterface {
   }
 
   private void refreshGameStateUI(){
-//    LOGGER.info("game state after refreshing: " + gameState);
     LOGGER.info("player after refreshing: " + player);
+    this.gui.updateGameState(this.gameState);
   }
 
   /**
@@ -491,7 +503,7 @@ public class Game implements GameInterface {
         break;
 
       case MOVE_NORTH:
-        updated = gameState.move(player, 0, 1);
+        updated = gameState.move(player, 0, -1);
         break;
 
       case EXIT:
@@ -517,6 +529,11 @@ public class Game implements GameInterface {
   public boolean syncGameState(GameState gameState) throws RemoteException {
     updateGameState(gameState);
     return false;
+  }
+
+  @Override
+  public GameState getGameState() throws RemoteException {
+    return gameState;
   }
 
   @Override
