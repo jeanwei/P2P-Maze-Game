@@ -3,23 +3,39 @@ A demo game for peer-to-peer distributed system
 
 Instruction to start demo:
 
-1. Go to java source folder
-cd ~/P2P-Maze-Game/src/
-cd /c/MyProjects/P2P-Maze-Game/src
-2. compile the classes:
-javac com/p2p/maze/*.java
-3.  Open a new terminal to start rmiregistry 1099
-4.  Open a new terminal to Start Tracker
-java -Djava.rmi.server.hostname=[A.B.C.D] com.p2p.maze.Tracker [portNumber] [n] [k]
-e.g. java com.p2p.maze.Tracker 1099 32 5
-Note: A.B.C.D is IP address, currently portNumber is not in use.
-5.  Open a new terminal to Start Game
-java com.p2p.maze.Game [A.B.C.D] [portNumber] [playerId]
-e.g. java com.p2p.maze.Game 1099 t1
-Note: A.B.C.D is IP address, currently ip and portNumber is not in use.
-6. Repeat step 5 to create more players.
+##### Go to java source folder
+```
+cd P2P-Maze-Game/src/
+```
 
+##### compile class into build dir
+```
 javac -d ../build/ com/p2p/maze/*.java
-start rmiregistry 1099
-java com.p2p.maze.Tracker 1099 32 5
-java com.p2p.maze.Game 1099 t1
+```
+Note: to run StressTest, please compile the class into `/build` dir as well
+
+##### Open a new terminal to start rmiregistry (port 1099)
+```
+rmiregistry 1099
+```
+
+##### Open a new terminal to Start Tracker
+Input format
+> java com.p2p.maze.Tracker [Port Number] [N] [K]
+```
+java com.p2p.maze.Tracker 1099 15 10
+```
+
+##### Open a new terminal to Start Game
+Input format
+> java com.p2p.maze.Game [IP Address] [Port Number] [Player ID (two char)]
+```
+java com.p2p.maze.Game localhost 1099 p1
+```
+
+
+##### Run Stress Test
+If to run StressTest, run the following command in `/build` dir
+```
+java StressTest 127.0.0.1 1099 "java com.p2p.maze.Game"
+```
