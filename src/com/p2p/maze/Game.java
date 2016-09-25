@@ -226,31 +226,36 @@ public class Game implements GameInterface {
         LOGGER.severe("Unable to read command");
         quit();
         return;
+        // TODO: enable continue before submission!
+        // continue;
       }
 
-      String trackingId = " Command Char : " + commandChar;
-
-      if (isPrimary()){
-        try{
-          synchronized (lock){
+      if (isPrimary()) {
+        synchronized (lock){
+          try{
             play(commandChar);
+          } catch (RemoteException | NotBoundException e) {
+            LOGGER.severe("server play error: " + e.toString());
           }
-        } catch (RemoteException | NotBoundException e) {
-          LOGGER.severe("server play error: " + e.toString());
         }
+
       } else {
         boolean primaryNotFound = false;
         try {
-          LOGGER.info(trackingId + " connecting to primary: "+gameState.getPrimary().getPlayerId());
+          LOGGER.info(String.format("Command Char %s connect to primary: %s | start", commandChar,
+                  gameState.getPrimary().getPlayerId()));
+
           connectToServerAndPlay(commandChar);
-          LOGGER.info(trackingId + " connected to primary: "+gameState.getPrimary().getPlayerId());
+
+          LOGGER.info(String.format("Command Char %s connect to primary: %s | end", commandChar,
+                  gameState.getPrimary().getPlayerId()));
 
         } catch (RemoteException | NotBoundException e) {
           LOGGER.severe("primary connectToServerAndPlay error : " + gameState.getPlayerInfo());
           primaryNotFound = true;
         }
 
-        if (primaryNotFound){
+        if (primaryNotFound) {
           try {
             if (isPrimary() || isBackup()){
               LOGGER.info(player.getPlayerId() + " is backup , playing local ");
@@ -261,11 +266,11 @@ public class Game implements GameInterface {
               serverRegistry = LocateRegistry.getRegistry(backupServer.getIp(), backupServer.getPortNumber());
               serverGameInterface = (GameInterface) serverRegistry.lookup(backupServer.getPlayerId());
 
-              LOGGER.info(trackingId + " connecting to: "+backupServer.getPlayerId());
+              LOGGER.info(String.format("Command char %s connect to: %s | start", commandChar, backupServer.getPlayerId()));
 
               connectToServerAndPlay(commandChar);
 
-              LOGGER.info(trackingId + " connected to backup: "+backupServer.getPlayerId());
+              LOGGER.info(String.format("Command char %s connect to: %s | end", commandChar, backupServer.getPlayerId()));
             }
 
           } catch (RemoteException | NotBoundException e) {
@@ -277,7 +282,8 @@ public class Game implements GameInterface {
     }
   }
 
-  private void quit() {
+  private static void quit() {
+    LOGGER.info("Exit!");
     System.exit(0);
   }
 
@@ -299,8 +305,7 @@ public class Game implements GameInterface {
         updateGameState(executeCommand(player, Command.MOVE_NORTH));
         break;
       case '9':
-        LOGGER.info("Exit!");
-        System.exit(0);
+        quit();
         break;
 
     }
@@ -325,8 +330,7 @@ public class Game implements GameInterface {
         break;
       case '9':
         serverGameInterface.executeCommand(player, Command.EXIT);
-        LOGGER.info("Exit!");
-        System.exit(0);
+        quit();
         break;
       default:
         break;
@@ -418,8 +422,7 @@ public class Game implements GameInterface {
 
 
     LOGGER.severe(String.format("Player %s exit unexpectedly", playerId));
-    LOGGER.severe("Exit!");
-    System.exit(0);
+    quit();
   }
 
   /**
@@ -516,7 +519,7 @@ public class Game implements GameInterface {
         LOGGER.warning("Unrecognized command");
     }
     if (updated){
-      refreshGameStateUI(); // TODO: UI update in primary server may be too frequent
+      refreshGameStateUI();
       notifyBackup();
     }
     return gameState;
