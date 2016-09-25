@@ -56,7 +56,9 @@ public class MazeGUI extends JFrame{
         this.mazeGrid = new JTextField[gameState.getN()][gameState.getN()];
         for(int i=0; i<this.mazeGrid.length; i++) {
             for (int j = 0; j < this.mazeGrid[i].length; j++) {
-                this.mazeGrid[i][j] = new JTextField(i + " " + j);
+                JTextField textField = new JTextField(j + "," + i);
+                textField.setEditable(false);
+                this.mazeGrid[i][j] = textField;
                 this.mazePanel.add(this.mazeGrid[i][j]);
             }
         }
@@ -75,14 +77,14 @@ public class MazeGUI extends JFrame{
                     this.mazeGrid[i][j].setText("");
                 } else if (gameState.getPrimary() != null &&
                         maze[i][j].equals(gameState.getPrimary().getPlayerId())) {
-                    this.mazeGrid[i][j].setText(String.format("(%d, %d) ", i, j) + maze[i][j] + " P");
+                    this.mazeGrid[i][j].setText(String.format("%s (%d, %d) P", maze[i][j], j, i));
 
                 } else if (gameState.getBackup() != null &&
                         maze[i][j].equals(gameState.getBackup().getPlayerId())) {
-                    this.mazeGrid[i][j].setText(String.format("(%d, %d) ", i, j) + maze[i][j] + " B");
+                    this.mazeGrid[i][j].setText(String.format("%s (%d, %d) B",  maze[i][j], j, i));
 
                 } else {
-                    this.mazeGrid[i][j].setText(String.format("(%d, %d) ", i, j) + maze[i][j]);
+                    this.mazeGrid[i][j].setText(String.format("%s (%d, %d)  ", maze[i][j], j, i));
                 }
             }
         }

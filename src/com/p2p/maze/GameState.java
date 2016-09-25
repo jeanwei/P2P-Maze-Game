@@ -162,21 +162,16 @@ public class GameState extends TrackerState {
   @Override
   public String toString() {
     StringBuilder stringBuffer = new StringBuilder();
-    stringBuffer.append("GameState{" +
-        "n=" + n +
-        ", k=" + k +
-        ", primary='" + primary + '\'' +
-        ", backup='" + backup + '\'' +
-        ", playerPosition='" + Arrays.asList(playerMap) + '\'' +
-        '}');
+    stringBuffer.append(String.format("GameState { n = %d, k = %d\nprimary: %s\nbackup: %s\nplayer positions: %s }",
+            n, k, primary, backup, Arrays.asList(playerMap)));
 
     String newLineStr = System.getProperty("line.separator");
     stringBuffer.append(newLineStr);
-    stringBuffer.append("maze=" + newLineStr);
-    int index;
+    stringBuffer.append("maze:");
     if (maze == null) {
       stringBuffer.append("null");
     } else {
+      stringBuffer.append(newLineStr);
       for (int row = 0; row < n + 1; row++) {
         for (int col = 0; col < n + 1; col++) {
           if (col == 0 && row == 0) {
@@ -194,10 +189,14 @@ public class GameState extends TrackerState {
           String value = maze[row - 1][col - 1];
           if (TREASURE_VALUE.equals(value)) {
             stringBuffer.append(TREASURE_VALUE + "   ");
+
           } else if (value != null) {
-            stringBuffer.append(value + "  ");
+            stringBuffer.append(value);
+            stringBuffer.append("  ");
+
           } else {
             stringBuffer.append("    ");
+
           }
         }
         stringBuffer.append(newLineStr);
