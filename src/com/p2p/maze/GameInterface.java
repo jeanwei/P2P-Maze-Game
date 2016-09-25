@@ -41,7 +41,7 @@ public interface GameInterface extends Remote {
   public boolean syncGameState(GameState gameState) throws RemoteException;
 
   /**
-   * [Primary -> new player] Promote new backup server when old one exit
+   * [Primary -> player] Promote new backup server when old one exit
    *
    * @param gameState game state
    */
@@ -52,7 +52,7 @@ public interface GameInterface extends Remote {
    * @param primary new primary
    * @throws RemoteException
      */
-  public void setPrimary(Player primary, Player backup) throws RemoteException;
+  public void updateServers(Player primary, Player backup) throws RemoteException;
 
 
   public GameState getGameState() throws RemoteException;
