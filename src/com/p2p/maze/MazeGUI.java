@@ -13,7 +13,7 @@ public class MazeGUI extends JFrame{
     private JPanel mainPanel;
     private JPanel playerListPanel;
     private JPanel mazePanel;
-    private JList playerList;
+    private JList<String> playerList;
     private JTextField [][] mazeGrid;
 
     public MazeGUI(Player player, GameState gameState) {
@@ -32,7 +32,7 @@ public class MazeGUI extends JFrame{
         int x = (int) ((dimension.getWidth() - getWidth()) / 2);
         int y = (int) ((dimension.getHeight() - getHeight()) / 2);
         setLocation(x, y);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.mainPanel = new JPanel();
         setContentPane(this.mainPanel);
     }
@@ -44,9 +44,9 @@ public class MazeGUI extends JFrame{
         this.mainPanel.add(this.playerListPanel, BorderLayout.LINE_START);
         this.mainPanel.add(this.mazePanel, BorderLayout.CENTER);
 
-        DefaultListModel listModel = new DefaultListModel();
+        DefaultListModel<String> listModel = new DefaultListModel<>();
         //Create the list and put it in a scroll pane.
-        this.playerList = new JList(listModel);
+        this.playerList = new JList<>(listModel);
         this.playerList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane listScrollPane = new JScrollPane(this.playerList);
         this.playerListPanel.setLayout(new BorderLayout());
@@ -63,7 +63,7 @@ public class MazeGUI extends JFrame{
     }
 
     public void updateGameState(GameState gameState){
-        DefaultListModel listModel = (DefaultListModel)this.playerList.getModel();
+        DefaultListModel<String> listModel = (DefaultListModel<String>) this.playerList.getModel();
         listModel.removeAllElements(); // remove list of players and update latest list of player
         for(String playerID: gameState.getPlayers().keySet()){
             listModel.addElement(playerID + " " + gameState.getPlayers().get(playerID).getScore());
@@ -75,11 +75,15 @@ public class MazeGUI extends JFrame{
                     this.mazeGrid[i][j].setText("");
                 } else if (gameState.getPrimary() != null &&
                         maze[i][j].equals(gameState.getPrimary().getPlayerId())) {
-                    this.mazeGrid[i][j].setText(String.format("(%2d, %2d) ", i, j) + maze[i][j] + " P");
+                    this.mazeGrid[i][j].setText(String.format("(%d, %d) ", i, j) + maze[i][j] + " P");
+
                 } else if (gameState.getBackup() != null &&
                         maze[i][j].equals(gameState.getBackup().getPlayerId())) {
-                    this.mazeGrid[i][j].setText(String.format("(%2d, %2d) ", i, j) + maze[i][j] + " B");
-                } else this.mazeGrid[i][j].setText(String.format("(%2d, %2d) ", i, j) + maze[i][j]);
+                    this.mazeGrid[i][j].setText(String.format("(%d, %d) ", i, j) + maze[i][j] + " B");
+
+                } else {
+                    this.mazeGrid[i][j].setText(String.format("(%d, %d) ", i, j) + maze[i][j]);
+                }
             }
         }
         this.mazePanel.repaint();
