@@ -1,7 +1,5 @@
 package com.p2p.maze;
 
-import com.p2p.maze.utils.LogFormatter;
-
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;

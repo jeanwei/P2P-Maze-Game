@@ -1,7 +1,5 @@
 package com.p2p.maze;
 
-import com.p2p.maze.utils.LogFormatter;
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.rmi.NotBoundException;

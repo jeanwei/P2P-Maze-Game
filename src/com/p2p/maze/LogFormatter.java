@@ -1,4 +1,4 @@
-package com.p2p.maze.utils;
+package com.p2p.maze;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
