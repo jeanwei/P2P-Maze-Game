@@ -90,7 +90,6 @@ public class Tracker implements TrackerInterface {
 
   /**
    * Custom log format
-   * TODO: set log level to warning before submission
    */
   private static void initLogger() {
     LOGGER.setUseParentHandlers(false);

@@ -226,8 +226,6 @@ public class Game implements GameInterface {
         LOGGER.severe("Unable to read command");
         quit();
         return;
-        // TODO: enable continue before submission!
-        // continue;
       }
 
       if (isPrimary()) {
@@ -427,7 +425,6 @@ public class Game implements GameInterface {
 
   /**
    * Custom log format
-   * TODO: set log level to warning before submission
    */
   private static void initLogger() {
     LOGGER.setUseParentHandlers(false);
